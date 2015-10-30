@@ -16,7 +16,9 @@ public:
 	Sprite *Layer2;
 	Sprite *Layer3;
 	Sprite *Layer4;
+	
 	Sprite *Iniko;
+	Sprite *Portal1;
 	
 	bool moveRight;
 	bool moveLeft;

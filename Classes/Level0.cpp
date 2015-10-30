@@ -26,7 +26,7 @@ bool Level0::init()
 	{
 		return false;
 	}
-
+	
 	moveRight = false;
 	moveLeft = false;
 	
@@ -34,11 +34,35 @@ bool Level0::init()
 	
 	createBackground();
 	
+	SpriteBatchNode* Portal1spritebatch = SpriteBatchNode::create("images/Level0/Assets/PortalSpriteSheet.png");
+	SpriteFrameCache* Portal1cache = SpriteFrameCache::getInstance();
+	Portal1cache->addSpriteFramesWithFile("images/Level0/Assets/PortalSpriteSheet.plist");
+	
+	Portal1 = Sprite::createWithSpriteFrameName("Portal1.png");
+	Portal1->setPosition(Point(1530, 338));
+	Portal1spritebatch->addChild(Portal1);
+	addChild(Portal1spritebatch, 3);
+	
+	Vector<SpriteFrame*> Portal1animFrames(27);
+	
+	char str[100] = {0};
+	for(int i = 1; i <= 27; i++)
+	{
+		sprintf(str, "Portal%d.png", i);
+		SpriteFrame* frame = Portal1cache->getSpriteFrameByName(str);
+		Portal1animFrames.pushBack(frame);
+	}
+	
+	Animation* Portal1animation = Animation::createWithSpriteFrames(Portal1animFrames, 0.08f);
+	Portal1->runAction(RepeatForever::create(Animate::create(Portal1animation)));
+	
 	Iniko = Sprite::create("images/Characters/Iniko.png");
 	Iniko->setPosition(Point(visibleSize.width/2, Iniko->getContentSize().height/2 + 85));
-
+	
 	addChild(Iniko, 3);
 	
+	this->runAction(Follow::create(Iniko, Rect(0, visibleSize.height/2, 10500, 0)));
+
 	this->scheduleUpdate();
 	
 	auto listener = EventListenerKeyboard::create();
@@ -85,14 +109,14 @@ void Level0::update(float dt)
 {
 	if(moveRight)
 	{
-		backgroundMove(1);
-		//characterMove(1);
+		//backgroundMove(1);
+		characterMove(1);
 	}
 	
 	else if(moveLeft)
 	{
-		backgroundMove(2);
-		//characterMove(2);
+		//backgroundMove(2);
+		characterMove(2);
 	}
 }
 
@@ -124,16 +148,16 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 
 void Level0::backgroundMove(int direction)
 {
-	Vec2 newPos0;
+	/*Vec2 newPos0;
 	Vec2 newPos1;
 	Vec2 newPos2;
 	Vec2 newPos3;
-	Vec2 newPos4;
+	Vec2 newPos4;*/
 	
 	switch(direction)
 	{
 		case 1:
-			newPos0 = Vec2(Layer0->getPosition().x - 6, Layer0->getPosition().y);
+			/*newPos0 = Vec2(Layer0->getPosition().x - 6, Layer0->getPosition().y);
 			Layer0->setPosition(newPos0);
 			newPos1 = Vec2(Layer1->getPosition().x - 6, Layer1->getPosition().y);
 			Layer1->setPosition(newPos1);
@@ -142,11 +166,11 @@ void Level0::backgroundMove(int direction)
 			newPos3 = Vec2(Layer3->getPosition().x - 6, Layer3->getPosition().y);
 			Layer3->setPosition(newPos3);
 			newPos4 = Vec2(Layer4->getPosition().x - 6, Layer4->getPosition().y);
-			Layer4->setPosition(newPos4);			
+			Layer4->setPosition(newPos4);	*/	
 			break;
 			
 		case 2:
-			newPos0 = Vec2(Layer0->getPosition().x + 6, Layer0->getPosition().y);
+			/*newPos0 = Vec2(Layer0->getPosition().x + 6, Layer0->getPosition().y);
 			Layer0->setPosition(newPos0);
 			newPos1 = Vec2(Layer1->getPosition().x + 6, Layer1->getPosition().y);
 			Layer1->setPosition(newPos1);
@@ -155,7 +179,7 @@ void Level0::backgroundMove(int direction)
 			newPos3 = Vec2(Layer3->getPosition().x + 6, Layer3->getPosition().y);
 			Layer3->setPosition(newPos3);
 			newPos4 = Vec2(Layer4->getPosition().x + 6, Layer4->getPosition().y);
-			Layer4->setPosition(newPos4);			
+			Layer4->setPosition(newPos4);	*/	
 			break;
 	}
 }
@@ -167,12 +191,12 @@ void Level0::characterMove(int direction)
 	switch(direction)
 	{
 		case 1:
-			newPos = Vec2(Iniko->getPosition().x + 3, Iniko->getPosition().y);
+			newPos = Vec2(Iniko->getPosition().x + 6, Iniko->getPosition().y);
 			Iniko->setPosition(newPos);			
 			break;			
 			
 		case 2:
-			newPos = Vec2(Iniko->getPosition().x - 3, Iniko->getPosition().y);
+			newPos = Vec2(Iniko->getPosition().x - 6, Iniko->getPosition().y);
 			Iniko->setPosition(newPos);			
 			break;
 	}
