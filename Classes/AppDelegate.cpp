@@ -1,12 +1,12 @@
 #include "AppDelegate.h"
-#include "MainMenuScene.h"
+#include "Level0.h"
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
+static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
+static cocos2d::Size smallResolutionSize = cocos2d::Size(1280, 720);
+static cocos2d::Size mediumResolutionSize = cocos2d::Size(1366, 768);;
+static cocos2d::Size largeResolutionSize = cocos2d::Size(1920, 1080);
 
 AppDelegate::AppDelegate() {
 
@@ -40,9 +40,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("AnotherFate", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        //glview = GLViewImpl::createWithRect("AnotherFate", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+		//glview = cocos2d::GLViewImpl::create("AnotherFate");
+		glview = cocos2d::GLViewImpl::createWithFullScreen("AnotherFate");
 #else
-        glview = GLViewImpl::create("AnotherFate");
+        glview = cocos2d::GLViewImpl::create("AnotherFate");
 #endif
         director->setOpenGLView(glview);
     }
@@ -54,9 +56,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
 
     // Set the design resolution
+	designResolutionSize = largeResolutionSize;
 	Size frameSize = glview->getFrameSize();
-	glview->setFrameSize(1280, 720);
-	glview->setDesignResolutionSize(1280, 720, ResolutionPolicy::EXACT_FIT);
+	glview->setFrameSize(designResolutionSize.width, designResolutionSize.height);
+	glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::EXACT_FIT);
+	
     // if the frame's height is larger than the height of medium size.
     if (frameSize.height > mediumResolutionSize.height)
     {        
@@ -76,7 +80,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = MainMenuScene::createScene();
+    auto scene = Level0::createScene();
 
     // run
     director->runWithScene(scene);
