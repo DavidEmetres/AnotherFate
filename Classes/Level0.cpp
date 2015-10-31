@@ -1,39 +1,56 @@
 #include "Level0.h"
+#include "Character.h"
 
 USING_NS_CC;
 
 Scene* Level0::createScene()
 {
-	// 'scene' is an autorelease object
-	auto scene = Scene::create();
+	auto scene = Scene::createWithPhysics();
 
-	// 'layer' is an autorelease object
 	auto layer = Level0::create();
+	layer->setPhysicsWorld(scene->getPhysicsWorld());
 
-	// add layer as a child to scene
 	scene->addChild(layer);
 
-	// return the scene
 	return scene;
 }
 
-// on "init" you need to initialize your instance
 bool Level0::init()
 {
-	//////////////////////////////
-	// 1. super init first
 	if (!Layer::init())
 	{
 		return false;
 	}
 	
-	moveRight = false;
-	moveLeft = false;
-	
+	//INITIALIZE ATRIBUTES
+
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	
+	moveRight = false;
+	moveLeft = false;
+
+	//CREATE BACKGROUND LAYERS
+
 	createBackground();
 	
+	//CREATE ANIMATED OBJECTS
+
+	////////////////COLLISION EXAMPLE//////////////////////////
+
+	Portal2 = Sprite::create("images/Characters/Iniko.png");
+	Portal2->setPosition(Point(1200, 338));
+	addChild(Portal2, 3);
+
+	Portal2Collider = PhysicsBody::createCircle(Portal2->getContentSize().width / 2);
+	Portal2Collider->setContactTestBitmask(true);
+	Portal2Collider->setDynamic(true);
+	Portal2Collider->setCollisionBitmask(0);
+	Portal2Collider->setTag(1); //TAG 1 = OBJECT
+	
+	Portal2->setPhysicsBody(Portal2Collider);
+
+	////////////////COLLISION EXAMPLE//////////////////////////
+
 	SpriteBatchNode* Portal1spritebatch = SpriteBatchNode::create("images/Level0/Assets/PortalSpriteSheet.png");
 	SpriteFrameCache* Portal1cache = SpriteFrameCache::getInstance();
 	Portal1cache->addSpriteFramesWithFile("images/Level0/Assets/PortalSpriteSheet.plist");
@@ -55,22 +72,36 @@ bool Level0::init()
 	
 	Animation* Portal1animation = Animation::createWithSpriteFrames(Portal1animFrames, 0.08f);
 	Portal1->runAction(RepeatForever::create(Animate::create(Portal1animation)));
+
+	//CREATE CHARACTER
+
+	Iniko = new Character();
+
+	addChild(Iniko->characterArt, 3);
 	
-	Iniko = Sprite::create("images/Characters/Iniko.png");
-	Iniko->setPosition(Point(visibleSize.width/2, Iniko->getContentSize().height/2 + 85));
-	
-	addChild(Iniko, 3);
-	
-	this->runAction(Follow::create(Iniko, Rect(0, visibleSize.height/2, 10500, 0)));
+	//CREATE VIRTUAL CAMERA
+
+	this->runAction(Follow::create(Iniko->characterArt, Rect(0, visibleSize.height/2, 10500, 0)));
+
+	//INITIALIZE UPDATE FUNCTION
 
 	this->scheduleUpdate();
 	
+	//CREATE KEY INPUTS LISTENERS
+
 	auto listener = EventListenerKeyboard::create();
 
 	listener->onKeyPressed = CC_CALLBACK_2(Level0::onKeyPressed, this);
 	listener->onKeyReleased = CC_CALLBACK_2(Level0::onKeyReleased, this);
 
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
+
+	//CREATE PHYSIC CONTACT LISTENER
+
+	auto contactListener = EventListenerPhysicsContact::create();
+	contactListener->onContactBegin = CC_CALLBACK_1(Level0::onContactBegin, this);
+	contactListener->onContactSeparate = CC_CALLBACK_1(Level0::onContactSeparate, this);
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(contactListener, this);
 
 	return true;
 }
@@ -107,16 +138,14 @@ void Level0::createBackground()
 
 void Level0::update(float dt)
 {
-	if(moveRight)
+	if (moveRight)
 	{
-		//backgroundMove(1);
-		characterMove(1);
+		Iniko->characterMove(1);
 	}
-	
-	else if(moveLeft)
+
+	if (moveLeft)
 	{
-		//backgroundMove(2);
-		characterMove(2);
+		Iniko->characterMove(2);
 	}
 }
 
@@ -138,66 +167,42 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 
 void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 {
-	if (_pressedKey == keyCode)
+	switch (keyCode)
 	{
-		_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
-		moveRight = false;
-		moveLeft = false;
-	}
-}
-
-void Level0::backgroundMove(int direction)
-{
-	/*Vec2 newPos0;
-	Vec2 newPos1;
-	Vec2 newPos2;
-	Vec2 newPos3;
-	Vec2 newPos4;*/
-	
-	switch(direction)
-	{
-		case 1:
-			/*newPos0 = Vec2(Layer0->getPosition().x - 6, Layer0->getPosition().y);
-			Layer0->setPosition(newPos0);
-			newPos1 = Vec2(Layer1->getPosition().x - 6, Layer1->getPosition().y);
-			Layer1->setPosition(newPos1);
-			newPos2 = Vec2(Layer2->getPosition().x - 6, Layer2->getPosition().y);
-			Layer2->setPosition(newPos2);
-			newPos3 = Vec2(Layer3->getPosition().x - 6, Layer3->getPosition().y);
-			Layer3->setPosition(newPos3);
-			newPos4 = Vec2(Layer4->getPosition().x - 6, Layer4->getPosition().y);
-			Layer4->setPosition(newPos4);	*/	
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			moveRight = false;
 			break;
-			
-		case 2:
-			/*newPos0 = Vec2(Layer0->getPosition().x + 6, Layer0->getPosition().y);
-			Layer0->setPosition(newPos0);
-			newPos1 = Vec2(Layer1->getPosition().x + 6, Layer1->getPosition().y);
-			Layer1->setPosition(newPos1);
-			newPos2 = Vec2(Layer2->getPosition().x + 6, Layer2->getPosition().y);
-			Layer2->setPosition(newPos2);
-			newPos3 = Vec2(Layer3->getPosition().x + 6, Layer3->getPosition().y);
-			Layer3->setPosition(newPos3);
-			newPos4 = Vec2(Layer4->getPosition().x + 6, Layer4->getPosition().y);
-			Layer4->setPosition(newPos4);	*/	
+
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			moveLeft = false;
 			break;
 	}
 }
 
-void Level0::characterMove(int direction)
+void Level0::setPhysicsWorld(PhysicsWorld *world)
 {
-	Vec2 newPos;
-	
-	switch(direction)
-	{
-		case 1:
-			newPos = Vec2(Iniko->getPosition().x + 6, Iniko->getPosition().y);
-			Iniko->setPosition(newPos);			
-			break;			
-			
-		case 2:
-			newPos = Vec2(Iniko->getPosition().x - 6, Iniko->getPosition().y);
-			Iniko->setPosition(newPos);			
-			break;
-	}
+	mWorld = world;
+	mWorld->setGravity(Vec2::ZERO);
+}
+
+bool Level0::onContactBegin(PhysicsContact &contact)
+{
+	auto bodyA = contact.getShapeA()->getBody();
+	auto bodyB = contact.getShapeB()->getBody();
+
+	bodyB->getNode()->setVisible(false);
+
+	return true;
+}
+
+bool Level0::onContactSeparate(PhysicsContact &contact)
+{
+	auto bodyA = contact.getShapeA()->getBody();
+	auto bodyB = contact.getShapeB()->getBody();
+
+	bodyB->getNode()->setVisible(true);
+
+	return true;
 }

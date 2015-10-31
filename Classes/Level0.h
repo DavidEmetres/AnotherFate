@@ -2,40 +2,46 @@
 #define __LEVEL_0_H__
 
 #include "cocos2d.h"
+#include "Character.h"
 
 USING_NS_CC;
 
 class Level0 : public cocos2d::Layer
 {
 private:
+	PhysicsWorld *mWorld;
+
 	EventKeyboard::KeyCode _pressedKey;
 
 public:
-	Sprite *Layer0;
-	Sprite *Layer1;
-	Sprite *Layer2;
-	Sprite *Layer3;
-	Sprite *Layer4;
+	Sprite* Layer0;
+	Sprite* Layer1;
+	Sprite* Layer2;
+	Sprite* Layer3;
+	Sprite* Layer4;
 	
-	Sprite *Iniko;
-	Sprite *Portal1;
+	Sprite* Portal1;
+	Sprite* Portal2;
+	PhysicsBody* Portal2Collider;
 	
+	Character* Iniko;
+
 	bool moveRight;
 	bool moveLeft;
 	
 	void update(float dt);
 	void createBackground();
-	void backgroundMove(int direction);
-	void characterMove(int direction);
 	
+	void setPhysicsWorld(PhysicsWorld *world);
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event);
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event);
+	bool onContactBegin(PhysicsContact &contact);
+	bool onContactSeparate(PhysicsContact &contact);
 	
     static cocos2d::Scene* createScene();
 
     virtual bool init();
     
-    // implement the "static create()" method manually
     CREATE_FUNC(Level0);
 };
 
