@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "Character.h"
+#include "Item.h"
 
 USING_NS_CC;
 
@@ -18,19 +19,27 @@ public:
 	Sprite* Layer1;
 	Sprite* Layer2;
 	Sprite* Layer3;
+	Sprite* Floor;
+	PhysicsBody* FloorCollider;
 	Sprite* Layer4;
 	
 	Sprite* Portal1;
 	Sprite* Portal2;
 	PhysicsBody* Portal2Collider;
+
+	Item* vasijaPequeña1;
 	
 	Character* Iniko;
+
+	Action* cameraFollow;
 
 	bool moveRight;
 	bool moveLeft;
 	
 	void update(float dt);
 	void createBackground();
+	void changeCameraFollow(Node* target);
+	void fixPosition(Node* image, Node* floor);
 	
 	void setPhysicsWorld(PhysicsWorld *world);
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event);

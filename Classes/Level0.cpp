@@ -1,5 +1,4 @@
 #include "Level0.h"
-#include "Character.h"
 
 USING_NS_CC;
 
@@ -38,10 +37,10 @@ bool Level0::init()
 	////////////////COLLISION EXAMPLE//////////////////////////
 
 	Portal2 = Sprite::create("images/Characters/Iniko.png");
-	Portal2->setPosition(Point(1200, 338));
+	Portal2->setPosition(Point(1200, 800 + Portal2->getContentSize().height/2));
 	addChild(Portal2, 3);
 
-	Portal2Collider = PhysicsBody::createCircle(Portal2->getContentSize().width / 2);
+	Portal2Collider = PhysicsBody::createBox(Size(Portal2->getContentSize().width, Portal2->getContentSize().height));
 	Portal2Collider->setContactTestBitmask(true);
 	Portal2Collider->setDynamic(true);
 	Portal2Collider->setCollisionBitmask(0);
@@ -73,6 +72,11 @@ bool Level0::init()
 	Animation* Portal1animation = Animation::createWithSpriteFrames(Portal1animFrames, 0.08f);
 	Portal1->runAction(RepeatForever::create(Animate::create(Portal1animation)));
 
+	//CREATE INTERACTIVE ITEMS
+
+	vasijaPequeña1 = new Item(2);
+	addChild(vasijaPequeña1->itemArt, 3);
+
 	//CREATE CHARACTER
 
 	Iniko = new Character();
@@ -81,7 +85,7 @@ bool Level0::init()
 	
 	//CREATE VIRTUAL CAMERA
 
-	this->runAction(Follow::create(Iniko->characterArt, Rect(0, visibleSize.height/2, 10500, 0)));
+	cameraFollow = this->runAction(Follow::create(Iniko->characterArt, Rect(0, visibleSize.height/2, 10500, 0)));
 
 	//INITIALIZE UPDATE FUNCTION
 
@@ -129,6 +133,20 @@ void Level0::createBackground()
 	Layer3->setPosition(Point(Layer3->getContentSize().width/2, visibleSize.height - Layer3->getContentSize().height/2));
 
 	addChild(Layer3, 3);
+
+	Floor = Sprite::create("images/Level0/Assets/FloorCollider.png");
+	Floor->setPosition(Point(Floor->getContentSize().width / 2, Floor->getContentSize().height / 2));
+
+	addChild(Floor, 3);
+
+	FloorCollider = PhysicsBody::createBox(Size(10500, 85));
+	FloorCollider->setContactTestBitmask(true);
+	FloorCollider->setDynamic(true);
+	FloorCollider->setCollisionBitmask(0);
+	FloorCollider->setGravityEnable(false);
+	FloorCollider->setTag(-1);
+
+	Floor->setPhysicsBody(FloorCollider);
 	
 	Layer4 = Sprite::create("images/Level0/Layers/Level0_Layer4.png");
 	Layer4->setPosition(Point(Layer4->getContentSize().width/2, visibleSize.height - Layer4->getContentSize().height/2));
@@ -184,7 +202,7 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 void Level0::setPhysicsWorld(PhysicsWorld *world)
 {
 	mWorld = world;
-	mWorld->setGravity(Vec2::ZERO);
+	mWorld->setGravity(Vec2(0, -1000));
 }
 
 bool Level0::onContactBegin(PhysicsContact &contact)
@@ -192,7 +210,64 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	auto bodyA = contact.getShapeA()->getBody();
 	auto bodyB = contact.getShapeB()->getBody();
 
-	bodyB->getNode()->setVisible(false);
+	if (bodyA->getTag() == 0)
+	{
+		switch (bodyB->getTag())
+		{
+			case 2:
+				vasijaPequeña1->getThrow();
+				changeCameraFollow(bodyB->getNode());
+				break;
+
+			case 1:
+				Portal2->setVisible(false);
+				break;
+		}
+	}
+
+	if (bodyB->getTag() == 0)
+	{
+		switch (bodyA->getTag())
+		{
+		case 2:
+			vasijaPequeña1->getThrow();
+			changeCameraFollow(bodyA->getNode());
+			break;
+
+		case 1:
+			Portal2->setVisible(false);
+			break;
+		}
+	}
+
+
+	if (bodyB->getTag() == -1)
+	{
+		switch (bodyA->getTag())
+		{
+			case 2:
+				changeCameraFollow(Iniko->characterArt);
+				break;
+		}
+
+		bodyA->setVelocity(Vec2::ZERO);
+		bodyA->setGravityEnable(false);
+		fixPosition(bodyA->getNode(), bodyB->getNode());
+	}
+
+	if (bodyA->getTag() == -1)
+	{
+		switch (bodyB->getTag())
+		{
+			case 2:
+				changeCameraFollow(Iniko->characterArt);
+				break;
+		}
+
+		bodyB->setVelocity(Vec2::ZERO);
+		bodyB->setGravityEnable(false);
+		fixPosition(bodyB->getNode(), bodyA->getNode());
+	}
 
 	return true;
 }
@@ -202,7 +277,27 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	auto bodyA = contact.getShapeA()->getBody();
 	auto bodyB = contact.getShapeB()->getBody();
 
-	bodyB->getNode()->setVisible(true);
+	if (bodyB->getTag() == -1)
+	{
+		bodyA->setGravityEnable(true);
+	}
+
+	if (bodyA->getTag() == -1)
+	{
+		bodyB->setGravityEnable(true);
+	}
 
 	return true;
+}
+
+void Level0::changeCameraFollow(Node* target)
+{
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+
+	cameraFollow = this->runAction(Follow::create(target, Rect(0, visibleSize.height / 2, 10500, 0)));
+}
+
+void Level0::fixPosition(Node* image, Node* floor)
+{
+	image->setPosition(image->getPosition().x, floor->getContentSize().height + image->getContentSize().height / 2 + 120);
 }
