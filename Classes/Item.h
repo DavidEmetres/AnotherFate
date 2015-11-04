@@ -8,6 +8,9 @@ USING_NS_CC;
 class Item : public cocos2d::Layer
 {
 public:
+	Size visibleSize;
+	Size factor;
+
 	Sprite* itemArt;
 	int itemType;
 	PhysicsBody* itemCollider;

@@ -8,10 +8,17 @@ USING_NS_CC;
 class Character : public cocos2d::Layer
 {
 public:
+	Size visibleSize;
+	Size factor;
+
+	std::string res;
+
 	Sprite* characterArt;
+	Sprite* characterVision;
 	PhysicsBody* characterCollider;
 
 	void characterMove(int direction);
+	void moveCam(int direction);
 
 	Character();
 };

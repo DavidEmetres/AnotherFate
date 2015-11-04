@@ -15,6 +15,9 @@ private:
 	EventKeyboard::KeyCode _pressedKey;
 
 public:
+	Size visibleSize;
+	Size factor;
+
 	Sprite* Layer0;
 	Sprite* Layer1;
 	Sprite* Layer2;
@@ -24,8 +27,6 @@ public:
 	Sprite* Layer4;
 	
 	Sprite* Portal1;
-	Sprite* Portal2;
-	PhysicsBody* Portal2Collider;
 
 	Item* vasijaPequeña1;
 	
@@ -35,6 +36,7 @@ public:
 
 	bool moveRight;
 	bool moveLeft;
+	bool moveCam;
 	
 	void update(float dt);
 	void createBackground();
