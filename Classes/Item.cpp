@@ -31,8 +31,6 @@ void Item::createArt(int type)
 			itemArt->setPosition(Point(1397 * factor.width, (90 + itemArt->getContentSize().height/2) * factor.height));
 			break;
 	}
-
-	this->addChild(itemArt);
 }
 
 void Item::getThrow()

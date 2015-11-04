@@ -9,7 +9,6 @@ static cocos2d::Size mediumResolutionSize = cocos2d::Size(1366, 768);
 static cocos2d::Size largeResolutionSize = cocos2d::Size(1920, 1080);
 
 AppDelegate::AppDelegate() {
-
 }
 
 AppDelegate::~AppDelegate() 
@@ -56,7 +55,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
 
     // Set the design resolution
-	designResolutionSize = largeResolutionSize;
+	designResolutionSize = smallResolutionSize;
 	Size frameSize = glview->getFrameSize();
 	glview->setFrameSize(designResolutionSize.width, designResolutionSize.height);
 	glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::EXACT_FIT);
@@ -80,7 +79,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = Level0::createScene();
+	auto scene = Level0::createScene();
 
     // run
     director->runWithScene(scene);
