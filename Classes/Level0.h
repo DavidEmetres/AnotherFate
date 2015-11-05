@@ -45,6 +45,7 @@ public:
 	void createBackground();
 	void changeCameraFollow(Node* target);
 	void fixPosition(Node* image, Node* floor);
+	void createAnimations();
 	
 	void setPhysicsWorld(PhysicsWorld *world);
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event);

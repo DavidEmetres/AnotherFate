@@ -34,42 +34,10 @@ bool Level0::init()
 	//CREATE BACKGROUND LAYERS
 
 	createBackground();
-	
+
 	//CREATE ANIMATED OBJECTS
 
-	int res;				
-
-	if (visibleSize.width >= 1920)				//CHECK RESOLUTION TO
-		res = 1;								//SELECT THE SPRITE SHEET
-	else if (visibleSize.width >= 1366)
-		res = 2;
-	else
-		res = 3;
-
-	char str[100] = { 0 };
-
-	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.png", res);
-	SpriteBatchNode* Portal1spritebatch = SpriteBatchNode::create(str);
-	SpriteFrameCache* Portal1cache = SpriteFrameCache::getInstance();
-	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.plist", res);
-	Portal1cache->addSpriteFramesWithFile(str);
-
-	Portal1 = Sprite::createWithSpriteFrameName("Portal1.png");
-	Portal1->setPosition(Point(1530, 338));
-	Portal1spritebatch->addChild(Portal1);
-	addChild(Portal1spritebatch, 3);
-	
-	Vector<SpriteFrame*> Portal1animFrames(27);
-	
-	for(int i = 1; i <= 27; i++)
-	{
-		sprintf(str, "Portal%d.png", i);
-		SpriteFrame* frame = Portal1cache->getSpriteFrameByName(str);
-		Portal1animFrames.pushBack(frame);
-	}
-	
-	Animation* Portal1animation = Animation::createWithSpriteFrames(Portal1animFrames, 0.08f);
-	Portal1->runAction(RepeatForever::create(Animate::create(Portal1animation)));
+	createAnimations();
 
 	//CREATE INTERACTIVE ITEMS
 
@@ -93,6 +61,33 @@ bool Level0::init()
 
 	addChild(Iniko->characterArt, 3);
 	addChild(Iniko->characterVision, 3);
+	addChild(Iniko->characterRunningRightspritebatch, 3);
+
+	//CREATE FLOOR
+
+	Layer3 = Sprite::create("images/Level0/Layers/Level0_Layer3.png");
+	Layer3->setScaleX(factor.width);
+	Layer3->setScaleY(factor.height);
+	Layer3->setPosition(Point((Layer3->getContentSize().width / 2) * factor.width, (Layer3->getContentSize().height / 2) * factor.height));
+
+	addChild(Layer3, 3);
+
+	Floor = Sprite::create("images/Level0/Assets/FloorCollider.png");
+	Floor->setScaleX(factor.width);
+	Floor->setScaleY(factor.height);
+	Floor->setPosition(Point((Floor->getContentSize().width / 2) * factor.width, (Floor->getContentSize().height / 2) * factor.height));
+	Floor->setVisible(false);
+
+	addChild(Floor, 3);
+
+	FloorCollider = PhysicsBody::createBox(Size(Floor->getContentSize().width * factor.width, Floor->getContentSize().height * factor.height));
+	FloorCollider->setContactTestBitmask(true);
+	FloorCollider->setDynamic(true);
+	FloorCollider->setCollisionBitmask(0);
+	FloorCollider->setGravityEnable(false);
+	FloorCollider->setTag(-1);
+
+	Floor->setPhysicsBody(FloorCollider);
 	
 	//CREATE VIRTUAL CAMERA
 
@@ -144,7 +139,7 @@ void Level0::createBackground()
 
 	addChild(Layer2, 2);
 	
-	Layer3 = Sprite::create("images/Level0/Layers/Level0_Layer3.png");
+	/*Layer3 = Sprite::create("images/Level0/Layers/Level0_Layer3.png");
 	Layer3->setScaleX(factor.width);
 	Layer3->setScaleY(factor.height);
 	Layer3->setPosition(Point((Layer3->getContentSize().width/2) * factor.width, (Layer3->getContentSize().height/2) * factor.height));
@@ -154,18 +149,19 @@ void Level0::createBackground()
 	Floor = Sprite::create("images/Level0/Assets/FloorCollider.png");
 	Floor->setScaleX(factor.width);
 	Floor->setScaleY(factor.height);
-	Floor->setPosition(Point((Floor->getContentSize().width/2) * factor.width, (Floor->getContentSize().height/2)) * factor.height);
+	Floor->setPosition(Point((Floor->getContentSize().width/2) * factor.width, (Floor->getContentSize().height/2) * factor.height));
+	Floor->setVisible(false);
 
-	addChild(Floor, 3);
+	addChild(Floor, 3);*/
 
-	FloorCollider = PhysicsBody::createBox(Size(Floor->getContentSize().width * factor.width, Floor->getContentSize().height * factor.height));
+	/*FloorCollider = PhysicsBody::createBox(Size(Floor->getContentSize().width * factor.width, Floor->getContentSize().height * factor.height));
 	FloorCollider->setContactTestBitmask(true);
 	FloorCollider->setDynamic(true);
 	FloorCollider->setCollisionBitmask(0);
 	FloorCollider->setGravityEnable(false);
 	FloorCollider->setTag(-1);
 
-	Floor->setPhysicsBody(FloorCollider);
+	Floor->setPhysicsBody(FloorCollider);*/
 	
 	Layer4 = Sprite::create("images/Level0/Layers/Level0_Layer4.png");
 	Layer4->setScaleX(factor.width);
@@ -180,6 +176,8 @@ void Level0::update(float dt)
 	if (moveRight && !moveCam)
 	{
 		Iniko->characterMove(1);
+		Iniko->characterArt->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(true);
 	}
 
 	if (moveLeft && !moveCam)
@@ -191,7 +189,7 @@ void Level0::update(float dt)
 	{
 		Iniko->moveCam(1);
 	}
-
+	
 	if (moveLeft && moveCam)
 	{
 		Iniko->moveCam(2);
@@ -214,8 +212,8 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		switch (bodyB->getTag()/100)
 		{
 			case 2:														//..AN OBJECT
-				objectsVector.at(bodyB->getTag() - 200)->getThrow();
-				changeCameraFollow(bodyB->getNode());
+				//objectsVector.at(bodyB->getTag() - 200)->getThrow();
+				//changeCameraFollow(bodyB->getNode());
 				break;
 		}
 	}
@@ -225,8 +223,8 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		switch (bodyA->getTag()/100)
 		{
 			case 2:															//..AN OBJECT
-				objectsVector.at(bodyA->getTag() - 200)->getThrow();
-				changeCameraFollow(bodyA->getNode());
+				//objectsVector.at(bodyA->getTag() - 200)->getThrow();
+				//changeCameraFollow(bodyA->getNode());
 				break;
 		}
 	}
@@ -292,7 +290,7 @@ void Level0::changeCameraFollow(Node* target)
 
 void Level0::fixPosition(Node* image, Node* floor)
 {
-	image->setPosition(image->getPosition().x, (floor->getContentSize().height + image->getContentSize().height / 2 + 120) * factor.height);
+	image->setPosition(image->getPosition().x * factor.width, floor->getContentSize().height * factor.height + (image->getContentSize().height / 2 + 120) * factor.height);
 }
 
 void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
@@ -301,18 +299,18 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 
 	switch (_pressedKey)
 	{
-	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		moveRight = true;
-		break;
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			moveRight = true;
+			break;
 
-	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		moveLeft = true;
-		break;
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			moveLeft = true;
+			break;
 
-	case EventKeyboard::KeyCode::KEY_SPACE:
-		moveCam = true;
-		changeCameraFollow(Iniko->characterVision);
-		break;
+		case EventKeyboard::KeyCode::KEY_SPACE:
+			moveCam = true;
+			changeCameraFollow(Iniko->characterVision);
+			break;
 	}
 }
 
@@ -320,19 +318,60 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 {
 	switch (keyCode)
 	{
-	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
-		moveRight = false;
-		break;
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			moveRight = false;
+			Iniko->characterArt->setVisible(true);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+			break;
 
-	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
-		moveLeft = false;
-		break;
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			moveLeft = false;
+			break;
 
-	case EventKeyboard::KeyCode::KEY_SPACE:
-		moveCam = false;
-		changeCameraFollow(Iniko->characterArt);
-		break;
+		case EventKeyboard::KeyCode::KEY_SPACE:
+			moveCam = false;
+			changeCameraFollow(Iniko->characterArt);
+			break;
 	}
+}
+
+void Level0::createAnimations()
+{
+	int res;
+
+	if (visibleSize.width >= 1920)				//CHECK RESOLUTION TO
+		res = 1;								//SELECT THE SPRITE SHEET
+	else if (visibleSize.width >= 1366)
+		res = 2;
+	else
+		res = 3;
+
+	char str[100] = { 0 };
+
+	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.png", res);
+	SpriteBatchNode* Portal1spritebatch = SpriteBatchNode::create(str);
+	SpriteFrameCache* Portal1cache = SpriteFrameCache::getInstance();
+	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.plist", res);
+	Portal1cache->addSpriteFramesWithFile(str);
+
+	Portal1 = Sprite::createWithSpriteFrameName("Portal1.png");
+	Portal1->setScaleX(1.1);
+	Portal1->setScaleY(1.1);
+	Portal1->setPosition(Point(1530 * factor.height, 338 * factor.height));
+	Portal1spritebatch->addChild(Portal1);
+	addChild(Portal1spritebatch, 3);
+
+	Vector<SpriteFrame*> Portal1animFrames(27);
+
+	for (int i = 1; i <= 27; i++)
+	{
+		sprintf(str, "Portal%d.png", i);
+		SpriteFrame* frame = Portal1cache->getSpriteFrameByName(str);
+		Portal1animFrames.pushBack(frame);
+	}
+
+	Animation* Portal1animation = Animation::createWithSpriteFrames(Portal1animFrames, 0.08f);
+	Portal1->runAction(RepeatForever::create(Animate::create(Portal1animation)));
 }

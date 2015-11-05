@@ -11,14 +11,16 @@ public:
 	Size visibleSize;
 	Size factor;
 
-	std::string res;
-
 	Sprite* characterArt;
+	Sprite* characterRunningRight;
+	PhysicsBody* characterRunningRightCollider;
+	SpriteBatchNode* characterRunningRightspritebatch;
 	Sprite* characterVision;
 	PhysicsBody* characterCollider;
 
 	void characterMove(int direction);
 	void moveCam(int direction);
+	void createAnimation();
 
 	Character();
 };
