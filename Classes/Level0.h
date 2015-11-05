@@ -27,8 +27,11 @@ public:
 	Sprite* Layer4;
 	
 	Sprite* Portal1;
+	
+	Vector<Item*> objectsVector;
 
 	Item* vasijaPequeña1;
+	Item* vasijaPequeña2;
 	
 	Character* Iniko;
 

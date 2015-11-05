@@ -73,8 +73,19 @@ bool Level0::init()
 
 	//CREATE INTERACTIVE ITEMS
 
-	vasijaPequeña1 = new Item(2);
+	int tag;
+
+	vasijaPequeña1 = new Item(2, 1397, 90);
+	objectsVector.pushBack(vasijaPequeña1);
+	tag = (vasijaPequeña1->itemType * 100) + objectsVector.getIndex(vasijaPequeña1);
+	vasijaPequeña1->itemCollider->setTag(tag);
 	addChild(vasijaPequeña1->itemArt, 3);
+
+	vasijaPequeña2 = new Item(2, 1800, 90);
+	objectsVector.pushBack(vasijaPequeña2);
+	tag = (vasijaPequeña2->itemType * 100) + objectsVector.getIndex(vasijaPequeña2);
+	vasijaPequeña2->itemCollider->setTag(tag);
+	addChild(vasijaPequeña2->itemArt, 3);
 
 	//CREATE CHARACTER
 
@@ -198,34 +209,34 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	auto bodyA = contact.getShapeA()->getBody();
 	auto bodyB = contact.getShapeB()->getBody();
 
-	if (bodyA->getTag() == 0)							//IF CHARACTER COLLIDES WITH..
+	if (bodyA->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
 	{
-		switch (bodyB->getTag())
+		switch (bodyB->getTag()/100)
 		{
-			case 2:										//..AN OBJECT
-				vasijaPequeña1->getThrow();
+			case 2:														//..AN OBJECT
+				objectsVector.at(bodyB->getTag() - 200)->getThrow();
 				changeCameraFollow(bodyB->getNode());
 				break;
 		}
 	}
 
-	if (bodyB->getTag() == 0)							//IF CHARACTER COLLIDES WITH..
+	if (bodyB->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
 	{
-		switch (bodyA->getTag())
+		switch (bodyA->getTag()/100)
 		{
-		case 2:											//..AN OBJECT
-			vasijaPequeña1->getThrow();
-			changeCameraFollow(bodyA->getNode());
-			break;
+			case 2:															//..AN OBJECT
+				objectsVector.at(bodyA->getTag() - 200)->getThrow();
+				changeCameraFollow(bodyA->getNode());
+				break;
 		}
 	}
 
 
-	if (bodyB->getTag() == -1)							//IF FLOOR COLLIDES WITH..
+	if (bodyB->getTag() == -1)											//IF FLOOR COLLIDES WITH..
 	{
-		switch (bodyA->getTag())
+		switch (bodyA->getTag()/100)
 		{
-			case 2:										//..AN OBJECT
+			case 2:														//..AN OBJECT
 				changeCameraFollow(Iniko->characterArt);
 				break;
 		}
@@ -237,11 +248,11 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		fixPosition(bodyA->getNode(), bodyB->getNode());
 	}
 
-	if (bodyA->getTag() == -1)							//IF FLOOR COLLIDES WITH..
+	if (bodyA->getTag() == -1)											//IF FLOOR COLLIDES WITH..
 	{
-		switch (bodyB->getTag())
+		switch (bodyB->getTag()/100)
 		{
-			case 2:										//..AN OBJECT
+			case 2:														//..AN OBJECT
 				changeCameraFollow(Iniko->characterArt);
 				break;
 		}
@@ -261,12 +272,12 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	auto bodyA = contact.getShapeA()->getBody();
 	auto bodyB = contact.getShapeB()->getBody();
 
-	if (bodyB->getTag() == -1)							//IF FLOOR STOPS TO COLLIDES WITH..
+	if (bodyB->getTag() == -1)											//IF FLOOR STOPS TO COLLIDES WITH..
 	{
 		bodyA->setGravityEnable(true);
 	}
 
-	if (bodyA->getTag() == -1)							//IF FLOOR STOPS TO COLLIDES WITH..
+	if (bodyA->getTag() == -1)											//IF FLOOR STOPS TO COLLIDES WITH..
 	{
 		bodyB->setGravityEnable(true);
 	}
