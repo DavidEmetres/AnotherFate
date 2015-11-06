@@ -30,6 +30,8 @@ bool Level0::init()
 	moveRight = false;
 	moveLeft = false;
 	moveCam = false;
+	key = ' ';
+	contactBody = PhysicsBody::create();
 
 	//CREATE BACKGROUND LAYERS
 
@@ -62,6 +64,7 @@ bool Level0::init()
 	addChild(Iniko->characterArt, 3);
 	addChild(Iniko->characterVision, 3);
 	addChild(Iniko->characterRunningRightspritebatch, 3);
+	addChild(Iniko->characterRunningLeftspritebatch, 3);
 
 	//CREATE FLOOR
 
@@ -173,6 +176,8 @@ void Level0::createBackground()
 
 void Level0::update(float dt)
 {
+	//MOVEMENT UPDATE
+
 	if (moveRight && !moveCam)
 	{
 		Iniko->characterMove(1);
@@ -183,6 +188,8 @@ void Level0::update(float dt)
 	if (moveLeft && !moveCam)
 	{
 		Iniko->characterMove(2);
+		Iniko->characterArt->setVisible(false);
+		Iniko->characterRunningLeftspritebatch->setVisible(true);
 	}
 
 	if (moveRight && moveCam)
@@ -193,6 +200,19 @@ void Level0::update(float dt)
 	if (moveLeft && moveCam)
 	{
 		Iniko->moveCam(2);
+	}
+
+	//COLLISION UPDATE
+
+	switch (contactBody->getTag() / 100)
+	{
+		case 2:
+			if (key == 'A')
+			{
+				objectsVector.at(contactBody->getTag() - 200)->getThrow();
+				changeCameraFollow(contactBody->getNode());
+				break;
+			}
 	}
 }
 
@@ -209,24 +229,28 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 
 	if (bodyA->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
 	{
-		switch (bodyB->getTag()/100)
+		contactBody = bodyB;
+
+		/*switch (bodyB->getTag()/100)
 		{
 			case 2:														//..AN OBJECT
-				//objectsVector.at(bodyB->getTag() - 200)->getThrow();
-				//changeCameraFollow(bodyB->getNode());
+				/*objectsVector.at(bodyB->getTag() - 200)->getThrow();
+				changeCameraFollow(bodyB->getNode());
 				break;
-		}
+		}*/
 	}
 
 	if (bodyB->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
 	{
-		switch (bodyA->getTag()/100)
+		contactBody = bodyA;
+
+		/*switch (bodyA->getTag()/100)
 		{
 			case 2:															//..AN OBJECT
-				//objectsVector.at(bodyA->getTag() - 200)->getThrow();
-				//changeCameraFollow(bodyA->getNode());
+				/*objectsVector.at(bodyA->getTag() - 200)->getThrow();
+				changeCameraFollow(bodyA->getNode());
 				break;
-		}
+		}*/
 	}
 
 
@@ -270,6 +294,26 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	auto bodyA = contact.getShapeA()->getBody();
 	auto bodyB = contact.getShapeB()->getBody();
 
+	if (bodyA->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
+	{
+		switch (bodyB->getTag() / 100)
+		{
+		case 2:															//..AN OBJECT
+			
+			break;
+		}
+	}
+
+	if (bodyB->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
+	{
+		switch (bodyA->getTag() / 100)
+		{
+		case 2:															//..AN OBJECT
+			
+			break;
+		}
+	}
+
 	if (bodyB->getTag() == -1)											//IF FLOOR STOPS TO COLLIDES WITH..
 	{
 		bodyA->setGravityEnable(true);
@@ -311,6 +355,11 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 			moveCam = true;
 			changeCameraFollow(Iniko->characterVision);
 			break;
+
+		case EventKeyboard::KeyCode::KEY_A:
+			key = 'A';
+			this->runAction(Sequence::create(DelayTime::create(1), CallFunc::create(CC_CALLBACK_0(Level0::keyNull, this)), NULL));
+			break;
 	}
 }
 
@@ -328,11 +377,19 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			moveLeft = false;
+			Iniko->characterArt->setVisible(true);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
 			break;
 
 		case EventKeyboard::KeyCode::KEY_SPACE:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			moveCam = false;
 			changeCameraFollow(Iniko->characterArt);
+			break;
+
+		case EventKeyboard::KeyCode::KEY_A:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			key = ' ';
 			break;
 	}
 }
@@ -349,6 +406,8 @@ void Level0::createAnimations()
 		res = 3;
 
 	char str[100] = { 0 };
+
+	//PORTAL 1 ANIMATION
 
 	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.png", res);
 	SpriteBatchNode* Portal1spritebatch = SpriteBatchNode::create(str);
@@ -374,4 +433,9 @@ void Level0::createAnimations()
 
 	Animation* Portal1animation = Animation::createWithSpriteFrames(Portal1animFrames, 0.08f);
 	Portal1->runAction(RepeatForever::create(Animate::create(Portal1animation)));
+}
+
+void Level0::keyNull()
+{
+	key = ' ';
 }

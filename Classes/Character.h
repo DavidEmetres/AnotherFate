@@ -12,11 +12,17 @@ public:
 	Size factor;
 
 	Sprite* characterArt;
+	PhysicsBody* characterCollider;
+
 	Sprite* characterRunningRight;
 	PhysicsBody* characterRunningRightCollider;
 	SpriteBatchNode* characterRunningRightspritebatch;
+
+	Sprite* characterRunningLeft;
+	PhysicsBody* characterRunningLeftCollider;
+	SpriteBatchNode* characterRunningLeftspritebatch;
+
 	Sprite* characterVision;
-	PhysicsBody* characterCollider;
 
 	void characterMove(int direction);
 	void moveCam(int direction);

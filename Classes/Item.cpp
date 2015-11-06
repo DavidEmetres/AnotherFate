@@ -11,6 +11,8 @@ Item::Item(int type, int posx, int posy)
 	this->posx = posx;
 	this->posy = posy;
 
+	thrown = false;
+
 	createArt(itemType);
 
 	itemCollider = PhysicsBody::createBox(Size((itemArt->getContentSize().width) * factor.width, (itemArt->getContentSize().height) * factor.height));
@@ -38,4 +40,5 @@ void Item::getThrow()
 {
 	itemArt->setPosition(Point((itemArt->getPosition().x) * factor.width, (itemArt->getPosition().y + 5) * factor.height));
 	itemCollider->setVelocity(Vec2(800, 600));
+	thrown = true;
 }

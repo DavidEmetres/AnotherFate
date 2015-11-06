@@ -17,6 +17,8 @@ public:
 	int posy;
 	PhysicsBody* itemCollider;
 
+	bool thrown;
+
 	void createArt(int type);
 	void getThrow();
 

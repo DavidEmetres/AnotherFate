@@ -36,16 +36,21 @@ public:
 	Character* Iniko;
 
 	Action* cameraFollow;
+	Action* keyAction;
+	CCCallFunc* actionCall;
 
 	bool moveRight;
 	bool moveLeft;
 	bool moveCam;
+	char key;
+	PhysicsBody* contactBody;
 	
 	void update(float dt);
 	void createBackground();
 	void changeCameraFollow(Node* target);
 	void fixPosition(Node* image, Node* floor);
 	void createAnimations();
+	void keyNull();
 	
 	void setPhysicsWorld(PhysicsWorld *world);
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event);
