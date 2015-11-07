@@ -24,6 +24,12 @@ Character::Character()
 
 	characterVision = Sprite::create();
 	characterVision->setPosition(Point(visibleSize.width / 2, (characterArt->getContentSize().height / 2 + 90) * factor.height));
+
+	//CHARACTER GUI
+
+	AKey = Sprite::create("images/Characters/GUI/AKey.png");
+	AKey->setPosition(Point(characterArt->getPosition().x, characterArt->getPosition().y + (characterArt->getContentSize().height/2 + 20) * factor.height));
+	AKey->setVisible(false);
 }
 
 void Character::characterMove(int direction)
@@ -34,19 +40,21 @@ void Character::characterMove(int direction)
 	switch (direction)
 	{
 		case 1:
-			newPos = Vec2((characterArt->getPosition().x + 10) * factor.height, characterArt->getPosition().y);
+			newPos = Vec2(characterArt->getPosition().x + 2, characterArt->getPosition().y);
 			characterArt->setPosition(newPos);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
+			AKey->setPositionX(newPos.x);
 			break;
 
 		case 2:
-			newPos = Vec2((characterArt->getPosition().x - 10) * factor.height, characterArt->getPosition().y);
+			newPos = Vec2(characterArt->getPosition().x - 2, characterArt->getPosition().y);
 			characterArt->setPosition(newPos);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
+			AKey->setPositionX(newPos.x);
 			break;
 	}
 }
@@ -59,12 +67,12 @@ void Character::moveCam(int direction)
 	switch (direction)
 	{
 	case 1:
-		newPos = Vec2((characterVision->getPosition().x + 15) * factor.height, characterVision->getPosition().y);
+		newPos = Vec2(characterVision->getPosition().x + (15 * factor.width), characterVision->getPosition().y);
 		characterVision->setPosition(newPos);
 		break;
 
 	case 2:
-		newPos = Vec2((characterVision->getPosition().x - 15) * factor.height, characterVision->getPosition().y);
+		newPos = Vec2(characterVision->getPosition().x - (15 * factor.width), characterVision->getPosition().y);
 		characterVision->setPosition(newPos);
 		break;
 	}
@@ -104,7 +112,7 @@ void Character::createAnimation()
 		characterRunningRightanimFrames.pushBack(frame);
 	}
 
-	Animation* characterRunningRightanimation = Animation::createWithSpriteFrames(characterRunningRightanimFrames, 0.02f);
+	Animation* characterRunningRightanimation = Animation::createWithSpriteFrames(characterRunningRightanimFrames, 0.045f);
 	characterRunningRight->runAction(RepeatForever::create(Animate::create(characterRunningRightanimation)));
 
 	characterRunningRightCollider = PhysicsBody::createBox(Size((characterRunningRight->getContentSize().width) * factor.width, 313 * factor.height));
@@ -136,7 +144,7 @@ void Character::createAnimation()
 		characterRunningLeftanimFrames.pushBack(frame);
 	}
 
-	Animation* characterRunningLeftanimation = Animation::createWithSpriteFrames(characterRunningLeftanimFrames, 0.02f);
+	Animation* characterRunningLeftanimation = Animation::createWithSpriteFrames(characterRunningLeftanimFrames, 0.045f);
 	characterRunningLeft->runAction(RepeatForever::create(Animate::create(characterRunningLeftanimation)));
 
 	characterRunningLeftCollider = PhysicsBody::createBox(Size((characterRunningLeft->getContentSize().width) * factor.width, 313 * factor.height));

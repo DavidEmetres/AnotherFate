@@ -23,6 +23,7 @@ public:
 	SpriteBatchNode* characterRunningLeftspritebatch;
 
 	Sprite* characterVision;
+	Sprite* AKey;
 
 	void characterMove(int direction);
 	void moveCam(int direction);

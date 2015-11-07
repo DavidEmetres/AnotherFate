@@ -65,6 +65,7 @@ bool Level0::init()
 	addChild(Iniko->characterVision, 3);
 	addChild(Iniko->characterRunningRightspritebatch, 3);
 	addChild(Iniko->characterRunningLeftspritebatch, 3);
+	addChild(Iniko->AKey, 3);
 
 	//CREATE FLOOR
 
@@ -192,6 +193,13 @@ void Level0::update(float dt)
 		Iniko->characterRunningLeftspritebatch->setVisible(true);
 	}
 
+	if (moveLeft && moveRight)
+	{
+		Iniko->characterArt->setVisible(true);
+		Iniko->characterRunningLeftspritebatch->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(false);
+	}
+
 	if (moveRight && moveCam)
 	{
 		Iniko->moveCam(1);
@@ -231,26 +239,24 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	{
 		contactBody = bodyB;
 
-		/*switch (bodyB->getTag()/100)
+		switch (bodyB->getTag()/100)
 		{
 			case 2:														//..AN OBJECT
-				/*objectsVector.at(bodyB->getTag() - 200)->getThrow();
-				changeCameraFollow(bodyB->getNode());
+				Iniko->AKey->setVisible(true);
 				break;
-		}*/
+		}
 	}
 
 	if (bodyB->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
 	{
 		contactBody = bodyA;
 
-		/*switch (bodyA->getTag()/100)
+		switch (bodyA->getTag()/100)
 		{
 			case 2:															//..AN OBJECT
-				/*objectsVector.at(bodyA->getTag() - 200)->getThrow();
-				changeCameraFollow(bodyA->getNode());
+				Iniko->AKey->setVisible(true);
 				break;
-		}*/
+		}
 	}
 
 
@@ -299,7 +305,7 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 		switch (bodyB->getTag() / 100)
 		{
 		case 2:															//..AN OBJECT
-			
+			Iniko->AKey->setVisible(false);
 			break;
 		}
 	}
@@ -309,7 +315,7 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 		switch (bodyA->getTag() / 100)
 		{
 		case 2:															//..AN OBJECT
-			
+			Iniko->AKey->setVisible(false);
 			break;
 		}
 	}
@@ -323,6 +329,8 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	{
 		bodyB->setGravityEnable(true);
 	}
+
+	contactBody = PhysicsBody::create();
 
 	return true;
 }
@@ -358,7 +366,7 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 
 		case EventKeyboard::KeyCode::KEY_A:
 			key = 'A';
-			this->runAction(Sequence::create(DelayTime::create(1), CallFunc::create(CC_CALLBACK_0(Level0::keyNull, this)), NULL));
+			this->runAction(Sequence::create(DelayTime::create(0.001f), CallFunc::create(CC_CALLBACK_0(Level0::keyNull, this)), NULL));
 			break;
 	}
 }
@@ -372,6 +380,7 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 			moveRight = false;
 			Iniko->characterArt->setVisible(true);
 			Iniko->characterRunningRightspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
 			break;
 
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
@@ -379,6 +388,7 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 			moveLeft = false;
 			Iniko->characterArt->setVisible(true);
 			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
 			break;
 
 		case EventKeyboard::KeyCode::KEY_SPACE:

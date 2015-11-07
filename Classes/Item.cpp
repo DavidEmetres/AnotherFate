@@ -38,7 +38,7 @@ void Item::createArt(int type)
 
 void Item::getThrow()
 {
-	itemArt->setPosition(Point((itemArt->getPosition().x) * factor.width, (itemArt->getPosition().y + 5) * factor.height));
+	itemArt->setPosition(Point(itemArt->getPosition().x, itemArt->getPosition().y + 5));
 	itemCollider->setVelocity(Vec2(800, 600));
 	thrown = true;
 }
