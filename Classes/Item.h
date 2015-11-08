@@ -13,12 +13,16 @@ public:
 
 	Sprite* itemArt;
 	int itemType;
+	int posx;
+	int posy;
 	PhysicsBody* itemCollider;
+
+	bool thrown;
 
 	void createArt(int type);
 	void getThrow();
 
-	Item(int type);
+	Item(int type, int posx, int posy);
 };
 
 #endif // __ITEM_H__

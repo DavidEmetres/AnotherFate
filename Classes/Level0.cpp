@@ -30,58 +30,69 @@ bool Level0::init()
 	moveRight = false;
 	moveLeft = false;
 	moveCam = false;
+	key = ' ';
+	contactBody = PhysicsBody::create();
 
 	//CREATE BACKGROUND LAYERS
 
 	createBackground();
-	
+
 	//CREATE ANIMATED OBJECTS
 
-	int res;				
-
-	if (visibleSize.width >= 1920)				//CHECK RESOLUTION TO
-		res = 1;								//SELECT THE SPRITE SHEET
-	else if (visibleSize.width >= 1366)
-		res = 2;
-	else
-		res = 3;
-
-	char str[100] = { 0 };
-
-	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.png", res);
-	SpriteBatchNode* Portal1spritebatch = SpriteBatchNode::create(str);
-	SpriteFrameCache* Portal1cache = SpriteFrameCache::getInstance();
-	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.plist", res);
-	Portal1cache->addSpriteFramesWithFile(str);
-
-	Portal1 = Sprite::createWithSpriteFrameName("Portal1.png");
-	Portal1->setPosition(Point(1530, 338));
-	Portal1spritebatch->addChild(Portal1);
-	addChild(Portal1spritebatch, 3);
-	
-	Vector<SpriteFrame*> Portal1animFrames(27);
-	
-	for(int i = 1; i <= 27; i++)
-	{
-		sprintf(str, "Portal%d.png", i);
-		SpriteFrame* frame = Portal1cache->getSpriteFrameByName(str);
-		Portal1animFrames.pushBack(frame);
-	}
-	
-	Animation* Portal1animation = Animation::createWithSpriteFrames(Portal1animFrames, 0.08f);
-	Portal1->runAction(RepeatForever::create(Animate::create(Portal1animation)));
+	createAnimations();
 
 	//CREATE INTERACTIVE ITEMS
 
-	vasijaPequeña1 = new Item(2);
+	int tag;
+
+	vasijaPequeña1 = new Item(2, 1397, 90);
+	objectsVector.pushBack(vasijaPequeña1);
+	tag = (vasijaPequeña1->itemType * 100) + objectsVector.getIndex(vasijaPequeña1);
+	vasijaPequeña1->itemCollider->setTag(tag);
 	addChild(vasijaPequeña1->itemArt, 3);
+
+	vasijaPequeña2 = new Item(2, 1800, 90);
+	objectsVector.pushBack(vasijaPequeña2);
+	tag = (vasijaPequeña2->itemType * 100) + objectsVector.getIndex(vasijaPequeña2);
+	vasijaPequeña2->itemCollider->setTag(tag);
+	addChild(vasijaPequeña2->itemArt, 3);
 
 	//CREATE CHARACTER
 
 	Iniko = new Character();
 
+	addChild(Iniko->dague, 3);
 	addChild(Iniko->characterArt, 3);
 	addChild(Iniko->characterVision, 3);
+	addChild(Iniko->characterRunningRightspritebatch, 3);
+	addChild(Iniko->characterRunningLeftspritebatch, 3);
+	addChild(Iniko->AKey, 3);
+
+	//CREATE FLOOR
+
+	Layer3 = Sprite::create("images/Level0/Layers/Level0_Layer3.png");
+	Layer3->setScaleX(factor.width);
+	Layer3->setScaleY(factor.height);
+	Layer3->setPosition(Point((Layer3->getContentSize().width / 2) * factor.width, (Layer3->getContentSize().height / 2) * factor.height));
+
+	addChild(Layer3, 3);
+
+	Floor = Sprite::create("images/Level0/Assets/FloorCollider.png");
+	Floor->setScaleX(factor.width);
+	Floor->setScaleY(factor.height);
+	Floor->setPosition(Point((Floor->getContentSize().width / 2) * factor.width, (Floor->getContentSize().height / 2) * factor.height));
+	Floor->setVisible(false);
+
+	addChild(Floor, 3);
+
+	FloorCollider = PhysicsBody::createBox(Size(Floor->getContentSize().width * factor.width, Floor->getContentSize().height * factor.height));
+	FloorCollider->setContactTestBitmask(true);
+	FloorCollider->setDynamic(true);
+	FloorCollider->setCollisionBitmask(0);
+	FloorCollider->setGravityEnable(false);
+	FloorCollider->setTag(-1);
+
+	Floor->setPhysicsBody(FloorCollider);
 	
 	//CREATE VIRTUAL CAMERA
 
@@ -133,7 +144,7 @@ void Level0::createBackground()
 
 	addChild(Layer2, 2);
 	
-	Layer3 = Sprite::create("images/Level0/Layers/Level0_Layer3.png");
+	/*Layer3 = Sprite::create("images/Level0/Layers/Level0_Layer3.png");
 	Layer3->setScaleX(factor.width);
 	Layer3->setScaleY(factor.height);
 	Layer3->setPosition(Point((Layer3->getContentSize().width/2) * factor.width, (Layer3->getContentSize().height/2) * factor.height));
@@ -143,18 +154,19 @@ void Level0::createBackground()
 	Floor = Sprite::create("images/Level0/Assets/FloorCollider.png");
 	Floor->setScaleX(factor.width);
 	Floor->setScaleY(factor.height);
-	Floor->setPosition(Point((Floor->getContentSize().width/2) * factor.width, (Floor->getContentSize().height/2)) * factor.height);
+	Floor->setPosition(Point((Floor->getContentSize().width/2) * factor.width, (Floor->getContentSize().height/2) * factor.height));
+	Floor->setVisible(false);
 
-	addChild(Floor, 3);
+	addChild(Floor, 3);*/
 
-	FloorCollider = PhysicsBody::createBox(Size(Floor->getContentSize().width * factor.width, Floor->getContentSize().height * factor.height));
+	/*FloorCollider = PhysicsBody::createBox(Size(Floor->getContentSize().width * factor.width, Floor->getContentSize().height * factor.height));
 	FloorCollider->setContactTestBitmask(true);
 	FloorCollider->setDynamic(true);
 	FloorCollider->setCollisionBitmask(0);
 	FloorCollider->setGravityEnable(false);
 	FloorCollider->setTag(-1);
 
-	Floor->setPhysicsBody(FloorCollider);
+	Floor->setPhysicsBody(FloorCollider);*/
 	
 	Layer4 = Sprite::create("images/Level0/Layers/Level0_Layer4.png");
 	Layer4->setScaleX(factor.width);
@@ -166,24 +178,50 @@ void Level0::createBackground()
 
 void Level0::update(float dt)
 {
+	//MOVEMENT UPDATE
+
 	if (moveRight && !moveCam)
 	{
 		Iniko->characterMove(1);
+		Iniko->characterArt->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(true);
 	}
 
 	if (moveLeft && !moveCam)
 	{
 		Iniko->characterMove(2);
+		Iniko->characterArt->setVisible(false);
+		Iniko->characterRunningLeftspritebatch->setVisible(true);
+	}
+
+	if (moveLeft && moveRight)
+	{
+		Iniko->characterArt->setVisible(true);
+		Iniko->characterRunningLeftspritebatch->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(false);
 	}
 
 	if (moveRight && moveCam)
 	{
 		Iniko->moveCam(1);
 	}
-
+	
 	if (moveLeft && moveCam)
 	{
 		Iniko->moveCam(2);
+	}
+
+	//COLLISION UPDATE
+
+	switch (contactBody->getTag() / 100)
+	{
+		case 2:
+			if (key == 'A')
+			{
+				objectsVector.at(contactBody->getTag() - 200)->getThrow();
+				changeCameraFollow(contactBody->getNode());
+				break;
+			}
 	}
 }
 
@@ -198,34 +236,36 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	auto bodyA = contact.getShapeA()->getBody();
 	auto bodyB = contact.getShapeB()->getBody();
 
-	if (bodyA->getTag() == 0)							//IF CHARACTER COLLIDES WITH..
+	if (bodyA->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
 	{
-		switch (bodyB->getTag())
+		contactBody = bodyB;
+
+		switch (bodyB->getTag()/100)
 		{
-			case 2:										//..AN OBJECT
-				vasijaPequeña1->getThrow();
-				changeCameraFollow(bodyB->getNode());
+			case 2:														//..AN OBJECT
+				Iniko->AKey->setVisible(true);
 				break;
 		}
 	}
 
-	if (bodyB->getTag() == 0)							//IF CHARACTER COLLIDES WITH..
+	if (bodyB->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
 	{
-		switch (bodyA->getTag())
+		contactBody = bodyA;
+
+		switch (bodyA->getTag()/100)
 		{
-		case 2:											//..AN OBJECT
-			vasijaPequeña1->getThrow();
-			changeCameraFollow(bodyA->getNode());
-			break;
+			case 2:															//..AN OBJECT
+				Iniko->AKey->setVisible(true);
+				break;
 		}
 	}
 
 
-	if (bodyB->getTag() == -1)							//IF FLOOR COLLIDES WITH..
+	if (bodyB->getTag() == -1)											//IF FLOOR COLLIDES WITH..
 	{
-		switch (bodyA->getTag())
+		switch (bodyA->getTag()/100)
 		{
-			case 2:										//..AN OBJECT
+			case 2:														//..AN OBJECT
 				changeCameraFollow(Iniko->characterArt);
 				break;
 		}
@@ -237,11 +277,11 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		fixPosition(bodyA->getNode(), bodyB->getNode());
 	}
 
-	if (bodyA->getTag() == -1)							//IF FLOOR COLLIDES WITH..
+	if (bodyA->getTag() == -1)											//IF FLOOR COLLIDES WITH..
 	{
-		switch (bodyB->getTag())
+		switch (bodyB->getTag()/100)
 		{
-			case 2:										//..AN OBJECT
+			case 2:														//..AN OBJECT
 				changeCameraFollow(Iniko->characterArt);
 				break;
 		}
@@ -261,15 +301,37 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	auto bodyA = contact.getShapeA()->getBody();
 	auto bodyB = contact.getShapeB()->getBody();
 
-	if (bodyB->getTag() == -1)							//IF FLOOR STOPS TO COLLIDES WITH..
+	if (bodyA->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
+	{
+		switch (bodyB->getTag() / 100)
+		{
+		case 2:															//..AN OBJECT
+			Iniko->AKey->setVisible(false);
+			break;
+		}
+	}
+
+	if (bodyB->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
+	{
+		switch (bodyA->getTag() / 100)
+		{
+		case 2:															//..AN OBJECT
+			Iniko->AKey->setVisible(false);
+			break;
+		}
+	}
+
+	if (bodyB->getTag() == -1)											//IF FLOOR STOPS TO COLLIDES WITH..
 	{
 		bodyA->setGravityEnable(true);
 	}
 
-	if (bodyA->getTag() == -1)							//IF FLOOR STOPS TO COLLIDES WITH..
+	if (bodyA->getTag() == -1)											//IF FLOOR STOPS TO COLLIDES WITH..
 	{
 		bodyB->setGravityEnable(true);
 	}
+
+	contactBody = PhysicsBody::create();
 
 	return true;
 }
@@ -281,7 +343,7 @@ void Level0::changeCameraFollow(Node* target)
 
 void Level0::fixPosition(Node* image, Node* floor)
 {
-	image->setPosition(image->getPosition().x, (floor->getContentSize().height + image->getContentSize().height / 2 + 120) * factor.height);
+	image->setPosition(image->getPosition().x * factor.width, floor->getContentSize().height * factor.height + (image->getContentSize().height / 2 + 120) * factor.height);
 }
 
 void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
@@ -290,18 +352,23 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 
 	switch (_pressedKey)
 	{
-	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		moveRight = true;
-		break;
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			moveRight = true;
+			break;
 
-	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		moveLeft = true;
-		break;
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			moveLeft = true;
+			break;
 
-	case EventKeyboard::KeyCode::KEY_SPACE:
-		moveCam = true;
-		changeCameraFollow(Iniko->characterVision);
-		break;
+		case EventKeyboard::KeyCode::KEY_SPACE:
+			moveCam = true;
+			changeCameraFollow(Iniko->characterVision);
+			break;
+
+		case EventKeyboard::KeyCode::KEY_A:
+			key = 'A';
+			this->runAction(Sequence::create(DelayTime::create(0.001f), CallFunc::create(CC_CALLBACK_0(Level0::keyNull, this)), NULL));
+			break;
 	}
 }
 
@@ -309,19 +376,77 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 {
 	switch (keyCode)
 	{
-	case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-		_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
-		moveRight = false;
-		break;
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			moveRight = false;
+			Iniko->characterArt->setVisible(true);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			break;
 
-	case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-		_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
-		moveLeft = false;
-		break;
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			moveLeft = false;
+			Iniko->characterArt->setVisible(true);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+			break;
 
-	case EventKeyboard::KeyCode::KEY_SPACE:
-		moveCam = false;
-		changeCameraFollow(Iniko->characterArt);
-		break;
+		case EventKeyboard::KeyCode::KEY_SPACE:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			moveCam = false;
+			changeCameraFollow(Iniko->characterArt);
+			break;
+
+		case EventKeyboard::KeyCode::KEY_A:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			key = ' ';
+			break;
 	}
+}
+
+void Level0::createAnimations()
+{
+	int res;
+
+	if (visibleSize.width >= 1920)				//CHECK RESOLUTION TO
+		res = 1;								//SELECT THE SPRITE SHEET
+	else if (visibleSize.width >= 1366)
+		res = 2;
+	else
+		res = 3;
+
+	char str[100] = { 0 };
+
+	//PORTAL 1 ANIMATION
+
+	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.png", res);
+	SpriteBatchNode* Portal1spritebatch = SpriteBatchNode::create(str);
+	SpriteFrameCache* Portal1cache = SpriteFrameCache::getInstance();
+	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.plist", res);
+	Portal1cache->addSpriteFramesWithFile(str);
+
+	Portal1 = Sprite::createWithSpriteFrameName("Portal1.png");
+	Portal1->setScaleX(1.1);
+	Portal1->setScaleY(1.1);
+	Portal1->setPosition(Point(1530 * factor.height, 338 * factor.height));
+	Portal1spritebatch->addChild(Portal1);
+	addChild(Portal1spritebatch, 3);
+
+	Vector<SpriteFrame*> Portal1animFrames(27);
+
+	for (int i = 1; i <= 27; i++)
+	{
+		sprintf(str, "Portal%d.png", i);
+		SpriteFrame* frame = Portal1cache->getSpriteFrameByName(str);
+		Portal1animFrames.pushBack(frame);
+	}
+
+	Animation* Portal1animation = Animation::createWithSpriteFrames(Portal1animFrames, 0.08f);
+	Portal1->runAction(RepeatForever::create(Animate::create(Portal1animation)));
+}
+
+void Level0::keyNull()
+{
+	key = ' ';
 }
