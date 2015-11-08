@@ -25,6 +25,11 @@ Character::Character()
 	characterVision = Sprite::create();
 	characterVision->setPosition(Point(visibleSize.width / 2, (characterArt->getContentSize().height / 2 + 90) * factor.height));
 
+	//PARTICLES
+
+	dague = CCParticleSystemQuad::create("images/Particles/Dague Particle/particle.plist");
+	dague->setPosition(Point(visibleSize.width / 2 + (38 * factor.width), (characterArt->getContentSize().height / 2 + 90 - 27) * factor.height));
+
 	//CHARACTER GUI
 
 	AKey = Sprite::create("images/Characters/GUI/AKey.png");
@@ -45,6 +50,8 @@ void Character::characterMove(int direction)
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
+			dague->setPosition(newPos.x + (38 * factor.width), newPos.y - (27 * factor.height));
+			dague->setRotation(0);
 			AKey->setPositionX(newPos.x);
 			break;
 
@@ -54,6 +61,8 @@ void Character::characterMove(int direction)
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
+			dague->setPosition(newPos.x - (38 * factor.width), newPos.y - (27 * factor.height));
+			dague->setRotation(180);
 			AKey->setPositionX(newPos.x);
 			break;
 	}

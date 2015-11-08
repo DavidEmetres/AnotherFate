@@ -22,6 +22,8 @@ public:
 	PhysicsBody* characterRunningLeftCollider;
 	SpriteBatchNode* characterRunningLeftspritebatch;
 
+	CCParticleSystemQuad* dague;
+
 	Sprite* characterVision;
 	Sprite* AKey;
 

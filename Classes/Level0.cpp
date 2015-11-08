@@ -61,6 +61,7 @@ bool Level0::init()
 
 	Iniko = new Character();
 
+	addChild(Iniko->dague, 3);
 	addChild(Iniko->characterArt, 3);
 	addChild(Iniko->characterVision, 3);
 	addChild(Iniko->characterRunningRightspritebatch, 3);
