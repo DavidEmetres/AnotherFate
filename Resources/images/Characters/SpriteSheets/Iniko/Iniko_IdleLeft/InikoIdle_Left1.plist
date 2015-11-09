@@ -9,60 +9,15 @@
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{2,0}</string>
+                <string>{2,2}</string>
                 <key>spriteSize</key>
-                <string>{166,310}</string>
+                <string>{166,308}</string>
                 <key>spriteSourceSize</key>
-                <string>{172,314}</string>
+                <string>{172,312}</string>
                 <key>textureRect</key>
-                <string>{{310,1},{166,310}}</string>
+                <string>{{1,1},{166,308}}</string>
                 <key>textureRotated</key>
-                <true/>
-            </dict>
-            <key>InikoIdle_Left10.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{3,1}</string>
-                <key>spriteSize</key>
-                <string>{167,309}</string>
-                <key>spriteSourceSize</key>
-                <string>{173,313}</string>
-                <key>textureRect</key>
-                <string>{{310,169},{167,309}}</string>
-                <key>textureRotated</key>
-                <true/>
-            </dict>
-            <key>InikoIdle_Left11.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{3,2}</string>
-                <key>spriteSize</key>
-                <string>{167,310}</string>
-                <key>spriteSourceSize</key>
-                <string>{173,314}</string>
-                <key>textureRect</key>
-                <string>{{621,169},{167,310}}</string>
-                <key>textureRotated</key>
-                <true/>
-            </dict>
-            <key>InikoIdle_Left12.png</key>
-            <dict>
-                <key>aliases</key>
-                <array/>
-                <key>spriteOffset</key>
-                <string>{4,1}</string>
-                <key>spriteSize</key>
-                <string>{164,307}</string>
-                <key>spriteSourceSize</key>
-                <string>{172,313}</string>
-                <key>textureRect</key>
-                <string>{{1,1},{164,307}}</string>
-                <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>InikoIdle_Left2.png</key>
             <dict>
@@ -71,13 +26,13 @@
                 <key>spriteOffset</key>
                 <string>{2,1}</string>
                 <key>spriteSize</key>
-                <string>{168,306}</string>
+                <string>{166,306}</string>
                 <key>spriteSourceSize</key>
-                <string>{174,312}</string>
+                <string>{172,312}</string>
                 <key>textureRect</key>
-                <string>{{617,338},{168,306}}</string>
+                <string>{{841,1},{166,306}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>InikoIdle_Left3.png</key>
             <dict>
@@ -90,9 +45,9 @@
                 <key>spriteSourceSize</key>
                 <string>{172,312}</string>
                 <key>textureRect</key>
-                <string>{{622,1},{166,306}}</string>
+                <string>{{1009,1},{166,306}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>InikoIdle_Left4.png</key>
             <dict>
@@ -105,9 +60,9 @@
                 <key>spriteSourceSize</key>
                 <string>{172,312}</string>
                 <key>textureRect</key>
-                <string>{{930,1},{166,306}}</string>
+                <string>{{1177,1},{166,306}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>InikoIdle_Left5.png</key>
             <dict>
@@ -116,43 +71,43 @@
                 <key>spriteOffset</key>
                 <string>{3,1}</string>
                 <key>spriteSize</key>
-                <string>{167,306}</string>
+                <string>{166,306}</string>
                 <key>spriteSourceSize</key>
-                <string>{173,312}</string>
+                <string>{172,312}</string>
                 <key>textureRect</key>
-                <string>{{933,169},{167,306}}</string>
+                <string>{{1345,1},{166,306}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>InikoIdle_Left6.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{3,2}</string>
+                <string>{3,1}</string>
                 <key>spriteSize</key>
-                <string>{167,306}</string>
+                <string>{166,306}</string>
                 <key>spriteSourceSize</key>
-                <string>{173,312}</string>
+                <string>{172,312}</string>
                 <key>textureRect</key>
-                <string>{{1,335},{167,306}}</string>
+                <string>{{1513,1},{166,306}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>InikoIdle_Left7.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{3,2}</string>
+                <string>{3,1}</string>
                 <key>spriteSize</key>
-                <string>{166,307}</string>
+                <string>{166,306}</string>
                 <key>spriteSourceSize</key>
-                <string>{172,313}</string>
+                <string>{172,312}</string>
                 <key>textureRect</key>
-                <string>{{1,167},{166,307}}</string>
+                <string>{{1681,1},{166,306}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>InikoIdle_Left8.png</key>
             <dict>
@@ -161,28 +116,73 @@
                 <key>spriteOffset</key>
                 <string>{3,1}</string>
                 <key>spriteSize</key>
-                <string>{167,306}</string>
+                <string>{166,306}</string>
                 <key>spriteSourceSize</key>
-                <string>{173,312}</string>
+                <string>{172,312}</string>
                 <key>textureRect</key>
-                <string>{{309,338},{167,306}}</string>
+                <string>{{1849,1},{166,306}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
             </dict>
             <key>InikoIdle_Left9.png</key>
             <dict>
                 <key>aliases</key>
                 <array/>
                 <key>spriteOffset</key>
-                <string>{3,1}</string>
+                <string>{3,2}</string>
                 <key>spriteSize</key>
-                <string>{169,308}</string>
+                <string>{166,308}</string>
                 <key>spriteSourceSize</key>
-                <string>{175,312}</string>
+                <string>{172,312}</string>
                 <key>textureRect</key>
-                <string>{{925,338},{169,308}}</string>
+                <string>{{169,1},{166,308}}</string>
                 <key>textureRotated</key>
-                <true/>
+                <false/>
+            </dict>
+            <key>InikoIdle_Left10.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{3,2}</string>
+                <key>spriteSize</key>
+                <string>{166,308}</string>
+                <key>spriteSourceSize</key>
+                <string>{172,312}</string>
+                <key>textureRect</key>
+                <string>{{337,1},{166,308}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>InikoIdle_Left11.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{3,2}</string>
+                <key>spriteSize</key>
+                <string>{166,308}</string>
+                <key>spriteSourceSize</key>
+                <string>{172,312}</string>
+                <key>textureRect</key>
+                <string>{{505,1},{166,308}}</string>
+                <key>textureRotated</key>
+                <false/>
+            </dict>
+            <key>InikoIdle_Left12.png</key>
+            <dict>
+                <key>aliases</key>
+                <array/>
+                <key>spriteOffset</key>
+                <string>{3,2}</string>
+                <key>spriteSize</key>
+                <string>{166,308}</string>
+                <key>spriteSourceSize</key>
+                <string>{172,312}</string>
+                <key>textureRect</key>
+                <string>{{673,1},{166,308}}</string>
+                <key>textureRotated</key>
+                <false/>
             </dict>
         </dict>
         <key>metadata</key>
@@ -192,9 +192,9 @@
             <key>realTextureFileName</key>
             <string>InikoIdle_Left1.png</string>
             <key>size</key>
-            <string>{1240,508}</string>
+            <string>{2016,310}</string>
             <key>smartupdate</key>
-            <string>$TexturePacker:SmartUpdate:5d2b564d3f018e9fa6fb100345d725c5:e20e0d274e8d38bcd8305c319446c87d:067d8939471cc02e72988e055c0ca1b6$</string>
+            <string>$TexturePacker:SmartUpdate:b126bf3f0cc94af7daef25e430ed2abc:ae0112b35884f8ba7ab387c572677a15:067d8939471cc02e72988e055c0ca1b6$</string>
             <key>textureFileName</key>
             <string>InikoIdle_Left1.png</string>
         </dict>

@@ -12,7 +12,6 @@ public:
 	Size factor;
 	bool facingRight;
 
-	Sprite* characterArt;
 	PhysicsBody* characterCollider;
 
 	Sprite* characterIdleRight;
@@ -30,8 +29,6 @@ public:
 	Sprite* characterRunningLeft;
 	PhysicsBody* characterRunningLeftCollider;
 	SpriteBatchNode* characterRunningLeftspritebatch;
-
-	CCParticleSystemQuad* dague;
 
 	Sprite* characterVision;
 	Sprite* AKey;

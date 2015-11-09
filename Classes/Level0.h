@@ -27,7 +27,9 @@ public:
 	Sprite* Layer4;
 	
 	Sprite* Portal1;
-	
+	CCParticleSystemQuad* portalParticles;
+	CCParticleSystemQuad* portalRayParticles;
+
 	Vector<Item*> objectsVector;
 
 	Item* vasijaPequeña1;
@@ -43,6 +45,7 @@ public:
 	bool moveLeft;
 	bool moveCam;
 	char key;
+	float curDetail;
 	PhysicsBody* contactBody;
 	
 	void update(float dt);
@@ -51,7 +54,7 @@ public:
 	void fixPosition(Node* image, Node* floor);
 	void createAnimations();
 	void keyNull();
-	
+
 	void setPhysicsWorld(PhysicsWorld *world);
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event);
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event);

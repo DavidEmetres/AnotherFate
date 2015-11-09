@@ -36,9 +36,21 @@ void Item::createArt(int type)
 	}
 }
 
-void Item::getThrow()
+void Item::getThrow(bool direction)
 {
 	itemArt->setPosition(Point(itemArt->getPosition().x, itemArt->getPosition().y + 5));
-	itemCollider->setVelocity(Vec2(800, 600));
+
+	if (direction)
+	{
+		itemCollider->setVelocity(Vec2(600, 600));
+		itemArt->runAction(RotateBy::create(2.0f, 360));
+	}
+
+	else
+	{
+		itemCollider->setVelocity(Vec2(-600, 600));
+		itemArt->runAction(RotateBy::create(2.0f, -360));
+	}
+
 	thrown = true;
 }

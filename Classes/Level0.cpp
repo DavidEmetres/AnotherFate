@@ -31,6 +31,7 @@ bool Level0::init()
 	moveLeft = false;
 	moveCam = false;
 	key = ' ';
+	curDetail = 5;
 	contactBody = PhysicsBody::create();
 
 	//CREATE BACKGROUND LAYERS
@@ -61,13 +62,11 @@ bool Level0::init()
 
 	Iniko = new Character();
 
-	//addChild(Iniko->dague, 3);
-	//addChild(Iniko->characterArt, 3);
-	addChild(Iniko->characterVision, 3);
 	addChild(Iniko->characterIdlerightspritebatch, 3);
-	addChild(Iniko->characterIdleleftspritebatch, 3);
 	addChild(Iniko->characterRunningRightspritebatch, 3);
+	addChild(Iniko->characterIdleleftspritebatch, 3);
 	addChild(Iniko->characterRunningLeftspritebatch, 3);
+	addChild(Iniko->characterVision, 3);
 	addChild(Iniko->AKey, 3);
 
 	//CREATE FLOOR
@@ -98,7 +97,6 @@ bool Level0::init()
 	
 	//CREATE VIRTUAL CAMERA
 
-	//changeCameraFollow(Iniko->characterArt);
 	changeCameraFollow(Iniko->characterIdlerightspritebatch);
 
 	//INITIALIZE UPDATE FUNCTION
@@ -147,30 +145,6 @@ void Level0::createBackground()
 
 	addChild(Layer2, 2);
 	
-	/*Layer3 = Sprite::create("images/Level0/Layers/Level0_Layer3.png");
-	Layer3->setScaleX(factor.width);
-	Layer3->setScaleY(factor.height);
-	Layer3->setPosition(Point((Layer3->getContentSize().width/2) * factor.width, (Layer3->getContentSize().height/2) * factor.height));
-
-	addChild(Layer3, 3);
-
-	Floor = Sprite::create("images/Level0/Assets/FloorCollider.png");
-	Floor->setScaleX(factor.width);
-	Floor->setScaleY(factor.height);
-	Floor->setPosition(Point((Floor->getContentSize().width/2) * factor.width, (Floor->getContentSize().height/2) * factor.height));
-	Floor->setVisible(false);
-
-	addChild(Floor, 3);*/
-
-	/*FloorCollider = PhysicsBody::createBox(Size(Floor->getContentSize().width * factor.width, Floor->getContentSize().height * factor.height));
-	FloorCollider->setContactTestBitmask(true);
-	FloorCollider->setDynamic(true);
-	FloorCollider->setCollisionBitmask(0);
-	FloorCollider->setGravityEnable(false);
-	FloorCollider->setTag(-1);
-
-	Floor->setPhysicsBody(FloorCollider);*/
-	
 	Layer4 = Sprite::create("images/Level0/Layers/Level0_Layer4.png");
 	Layer4->setScaleX(factor.width);
 	Layer4->setScaleY(factor.height);
@@ -205,7 +179,6 @@ void Level0::update(float dt)
 	{
 		Iniko->facingRight = true;
 		Iniko->characterMove(1);
-		//Iniko->characterArt->setVisible(false);
 		Iniko->characterIdlerightspritebatch->setVisible(false);
 		Iniko->characterIdleleftspritebatch->setVisible(false);
 		Iniko->characterRunningLeftspritebatch->setVisible(false);
@@ -216,7 +189,6 @@ void Level0::update(float dt)
 	{
 		Iniko->facingRight = false;
 		Iniko->characterMove(2);
-		//Iniko->characterArt->setVisible(false);s
 		Iniko->characterIdlerightspritebatch->setVisible(false);
 		Iniko->characterIdleleftspritebatch->setVisible(false);
 		Iniko->characterRunningRightspritebatch->setVisible(false);
@@ -226,7 +198,6 @@ void Level0::update(float dt)
 	if (moveLeft && moveRight)
 	{
 		Iniko->facingRight = true;
-		//Iniko->characterArt->setVisible(true);
 		Iniko->characterIdlerightspritebatch->setVisible(true);
 		Iniko->characterIdleleftspritebatch->setVisible(false);
 		Iniko->characterRunningLeftspritebatch->setVisible(false);
@@ -250,7 +221,7 @@ void Level0::update(float dt)
 		case 2:
 			if (key == 'A')
 			{
-				objectsVector.at(contactBody->getTag() - 200)->getThrow();
+				objectsVector.at(contactBody->getTag() - 200)->getThrow(Iniko->facingRight);
 				changeCameraFollow(contactBody->getNode());
 				break;
 			}
@@ -286,7 +257,7 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 
 		switch (bodyA->getTag()/100)
 		{
-			case 2:															//..AN OBJECT
+			case 2:														//..AN OBJECT
 				Iniko->AKey->setVisible(true);
 				break;
 		}
@@ -298,8 +269,10 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		switch (bodyA->getTag()/100)
 		{
 			case 2:														//..AN OBJECT
-				//changeCameraFollow(Iniko->characterArt);
-				changeCameraFollow(Iniko->characterIdlerightspritebatch);
+				if(objectsVector.at(bodyA->getTag() - 200)->thrown)
+					removeChild(objectsVector.at(bodyA->getTag() - 200)->itemArt);
+
+				changeCameraFollow(Iniko->characterIdleRight);
 				break;
 		}
 
@@ -315,8 +288,10 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		switch (bodyB->getTag()/100)
 		{
 			case 2:														//..AN OBJECT
-				//changeCameraFollow(Iniko->characterArt);
-				changeCameraFollow(Iniko->characterIdlerightspritebatch);
+				if (objectsVector.at(bodyB->getTag() - 200)->thrown)
+					removeChild(objectsVector.at(bodyB->getTag() - 200)->itemArt);
+
+				changeCameraFollow(Iniko->characterIdleRight);
 				break;
 		}
 
@@ -339,9 +314,9 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	{
 		switch (bodyB->getTag() / 100)
 		{
-		case 2:															//..AN OBJECT
-			Iniko->AKey->setVisible(false);
-			break;
+			case 2:														//..AN OBJECT
+				Iniko->AKey->setVisible(false);
+				break;
 		}
 	}
 
@@ -349,9 +324,9 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	{
 		switch (bodyA->getTag() / 100)
 		{
-		case 2:															//..AN OBJECT
-			Iniko->AKey->setVisible(false);
-			break;
+			case 2:														//..AN OBJECT
+				Iniko->AKey->setVisible(false);
+				break;
 		}
 	}
 
@@ -413,24 +388,17 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			moveRight = false;
-			/*Iniko->characterArt->setVisible(true);
-			Iniko->characterRunningRightspritebatch->setVisible(false);
-			Iniko->characterRunningLeftspritebatch->setVisible(false);*/
 			break;
 
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			moveLeft = false;
-			/*Iniko->characterArt->setVisible(true);
-			Iniko->characterRunningLeftspritebatch->setVisible(false);
-			Iniko->characterRunningRightspritebatch->setVisible(false);*/
 			break;
 
 		case EventKeyboard::KeyCode::KEY_SPACE:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			moveCam = false;
-			//changeCameraFollow(Iniko->characterArt);
-			changeCameraFollow(Iniko->characterIdlerightspritebatch);
+			changeCameraFollow(Iniko->characterIdleRight);
 			Iniko->characterVision->setPosition(Iniko->characterIdleRight->getPosition().x, Iniko->characterIdleRight->getPosition().y);
 			break;
 
@@ -454,32 +422,21 @@ void Level0::createAnimations()
 
 	char str[100] = { 0 };
 
-	//PORTAL 1 ANIMATION
+	//PORTAL PARTICLES
 
-	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.png", res);
-	SpriteBatchNode* Portal1spritebatch = SpriteBatchNode::create(str);
-	SpriteFrameCache* Portal1cache = SpriteFrameCache::getInstance();
-	sprintf(str, "images/Level0/Assets/SpriteSheets/Portal/FramesPortal%d.plist", res);
-	Portal1cache->addSpriteFramesWithFile(str);
+	portalParticles = CCParticleSystemQuad::create("images/Particles/PortalParticles/portal_particle.plist");
+	portalParticles->setPosition(Point(1530 * factor.height, 338 * factor.height));
+	portalParticles->setScaleX(factor.width * 0.4);
+	portalParticles->setScaleY(factor.height * 0.4);
+	portalParticles->setPositionType(kCCPositionTypeRelative);
+	addChild(portalParticles, 1);
 
-	Portal1 = Sprite::createWithSpriteFrameName("Portal1.png");
-	Portal1->setScaleX(1.1);
-	Portal1->setScaleY(1.1);
-	Portal1->setPosition(Point(1530 * factor.height, 338 * factor.height));
-	Portal1spritebatch->addChild(Portal1);
-	addChild(Portal1spritebatch, 3);
-
-	Vector<SpriteFrame*> Portal1animFrames(27);
-
-	for (int i = 1; i <= 27; i++)
-	{
-		sprintf(str, "Portal%d.png", i);
-		SpriteFrame* frame = Portal1cache->getSpriteFrameByName(str);
-		Portal1animFrames.pushBack(frame);
-	}
-
-	Animation* Portal1animation = Animation::createWithSpriteFrames(Portal1animFrames, 0.08f);
-	Portal1->runAction(RepeatForever::create(Animate::create(Portal1animation)));
+	portalRayParticles = CCParticleSystemQuad::create("images/Particles/PortalRayParticles/portalray_particle.plist");
+	portalRayParticles->setPosition(Point(1535 * factor.height, 345 * factor.height));
+	portalRayParticles->setScaleX(factor.width * 0.42);
+	portalRayParticles->setScaleY(factor.height * 0.42);
+	portalRayParticles->setPositionType(kCCPositionTypeRelative);
+	addChild(portalRayParticles, 1);
 }
 
 void Level0::keyNull()

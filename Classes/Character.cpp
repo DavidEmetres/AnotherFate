@@ -9,33 +9,17 @@ Character::Character()
 
 	facingRight = true;
 
-	/*characterArt = Sprite::create("images/Characters/Iniko.png");
-	characterArt->setScaleX(factor.width);
-	characterArt->setScaleY(factor.height);
-	characterArt->setPosition(Point(visibleSize.width / 2, (characterArt->getContentSize().height / 2 + 90) * factor.height));
-
-	characterCollider = PhysicsBody::createBox(Size((characterArt->getContentSize().width) * factor.width, (characterArt->getContentSize().height) * factor.height));
-	characterCollider->setContactTestBitmask(true);
-	characterCollider->setDynamic(true);
-	characterCollider->setCollisionBitmask(0);
-	characterCollider->setTag(0); //TAG 0 = CHARACTER
-
-	characterArt->setPhysicsBody(characterCollider);*/
-
 	createAnimation();
 
+	characterIdleRight->setPosition(Point(visibleSize.width / 2, (characterIdleRight->getContentSize().height / 2 + 80) * factor.height));
+
 	characterVision = Sprite::create();
-	characterVision->setPosition(Point(visibleSize.width / 2, (characterIdleRight->getContentSize().height / 2 + 90) * factor.height));
-
-	//PARTICLES
-
-	//dague = CCParticleSystemQuad::create("images/Particles/Dague Particle/particle.plist");
-	//dague->setPosition(Point(visibleSize.width / 2 + (38 * factor.width), (characterArt->getContentSize().height / 2 + 90 - 27) * factor.height));
+	characterVision->setPosition(Point(visibleSize.width / 2, (characterIdleRight->getContentSize().height / 2 + 80) * factor.height));
 
 	//CHARACTER GUI
 
 	AKey = Sprite::create("images/Characters/GUI/AKey.png");
-	AKey->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + (characterIdleRight->getContentSize().height/2 + 20) * factor.height));
+	AKey->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + (characterIdleRight->getContentSize().height/2 + 80) * factor.height));
 	AKey->setVisible(false);
 }
 
@@ -47,30 +31,22 @@ void Character::characterMove(int direction)
 	switch (direction)
 	{
 		case 1:
-			//newPos = Vec2(characterArt->getPosition().x + 8, characterArt->getPosition().y);
-			newPos = Vec2(characterIdleRight->getPosition().x + 8, characterIdleRight->getPosition().y);
-			//characterArt->setPosition(newPos);
+			newPos = Vec2(characterIdleRight->getPosition().x + 2, characterIdleRight->getPosition().y);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
 			characterIdleRight->setPosition(newPos);
 			characterIdleLeft->setPosition(newPos);
-			//dague->setPosition(newPos.x + (38 * factor.width), newPos.y - (27 * factor.height));
-			//dague->setRotation(0);
 			AKey->setPositionX(newPos.x);
 			break;
 
 		case 2:
-			//newPos = Vec2(characterArt->getPosition().x - 8, characterArt->getPosition().y);
-			newPos = Vec2(characterIdleRight->getPosition().x - 8, characterIdleRight->getPosition().y);
-			//characterArt->setPosition(newPos);
+			newPos = Vec2(characterIdleRight->getPosition().x - 2, characterIdleRight->getPosition().y);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
 			characterIdleRight->setPosition(newPos);
 			characterIdleLeft->setPosition(newPos);
-			//dague->setPosition(newPos.x - (38 * factor.width), newPos.y - (27 * factor.height));
-			//dague->setRotation(180);
 			AKey->setPositionX(newPos.x);
 			break;
 	}
@@ -132,7 +108,7 @@ void Character::createAnimation()
 	Animation* characterIdleRightanimation = Animation::createWithSpriteFrames(characterIdleRightanimFrames, 0.1f);
 	characterIdleRight->runAction(RepeatForever::create(Animate::create(characterIdleRightanimation)));
 
-	characterIdleRightCollider = PhysicsBody::createBox(Size((characterIdleRight->getContentSize().width) * factor.width, 313 * factor.height));
+	characterIdleRightCollider = PhysicsBody::createBox(Size((characterIdleRight->getContentSize().width) * factor.width, 301 * factor.height));
 	characterIdleRightCollider->setContactTestBitmask(true);
 	characterIdleRightCollider->setDynamic(true);
 	characterIdleRightCollider->setCollisionBitmask(0);
@@ -164,7 +140,7 @@ void Character::createAnimation()
 	Animation* characterIdleLeftanimation = Animation::createWithSpriteFrames(characterIdleLeftanimFrames, 0.1f);
 	characterIdleLeft->runAction(RepeatForever::create(Animate::create(characterIdleLeftanimation)));
 
-	characterIdleLeftCollider = PhysicsBody::createBox(Size((characterIdleLeft->getContentSize().width) * factor.width, 313 * factor.height));
+	characterIdleLeftCollider = PhysicsBody::createBox(Size((characterIdleLeft->getContentSize().width) * factor.width, 301 * factor.height));
 	characterIdleLeftCollider->setContactTestBitmask(true);
 	characterIdleLeftCollider->setDynamic(true);
 	characterIdleLeftCollider->setCollisionBitmask(0);
@@ -193,10 +169,10 @@ void Character::createAnimation()
 		characterRunningRightanimFrames.pushBack(frame);
 	}
 
-	Animation* characterRunningRightanimation = Animation::createWithSpriteFrames(characterRunningRightanimFrames, 0.045f);
+	Animation* characterRunningRightanimation = Animation::createWithSpriteFrames(characterRunningRightanimFrames, 0.03f);
 	characterRunningRight->runAction(RepeatForever::create(Animate::create(characterRunningRightanimation)));
 
-	characterRunningRightCollider = PhysicsBody::createBox(Size((characterRunningRight->getContentSize().width) * factor.width, 313 * factor.height));
+	characterRunningRightCollider = PhysicsBody::createBox(Size((characterRunningRight->getContentSize().width) * factor.width, 304 * factor.height));
 	characterRunningRightCollider->setContactTestBitmask(true);
 	characterRunningRightCollider->setDynamic(true);
 	characterRunningRightCollider->setCollisionBitmask(0);
@@ -225,10 +201,10 @@ void Character::createAnimation()
 		characterRunningLeftanimFrames.pushBack(frame);
 	}
 
-	Animation* characterRunningLeftanimation = Animation::createWithSpriteFrames(characterRunningLeftanimFrames, 0.045f);
+	Animation* characterRunningLeftanimation = Animation::createWithSpriteFrames(characterRunningLeftanimFrames, 0.03f);
 	characterRunningLeft->runAction(RepeatForever::create(Animate::create(characterRunningLeftanimation)));
 
-	characterRunningLeftCollider = PhysicsBody::createBox(Size((characterRunningLeft->getContentSize().width) * factor.width, 313 * factor.height));
+	characterRunningLeftCollider = PhysicsBody::createBox(Size((characterRunningLeft->getContentSize().width) * factor.width, 304 * factor.height));
 	characterRunningLeftCollider->setContactTestBitmask(true);
 	characterRunningLeftCollider->setDynamic(true);
 	characterRunningLeftCollider->setCollisionBitmask(0);
