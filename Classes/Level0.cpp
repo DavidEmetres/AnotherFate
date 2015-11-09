@@ -61,9 +61,11 @@ bool Level0::init()
 
 	Iniko = new Character();
 
-	addChild(Iniko->dague, 3);
-	addChild(Iniko->characterArt, 3);
+	//addChild(Iniko->dague, 3);
+	//addChild(Iniko->characterArt, 3);
 	addChild(Iniko->characterVision, 3);
+	addChild(Iniko->characterIdlerightspritebatch, 3);
+	addChild(Iniko->characterIdleleftspritebatch, 3);
 	addChild(Iniko->characterRunningRightspritebatch, 3);
 	addChild(Iniko->characterRunningLeftspritebatch, 3);
 	addChild(Iniko->AKey, 3);
@@ -96,7 +98,8 @@ bool Level0::init()
 	
 	//CREATE VIRTUAL CAMERA
 
-	changeCameraFollow(Iniko->characterArt);
+	//changeCameraFollow(Iniko->characterArt);
+	changeCameraFollow(Iniko->characterIdlerightspritebatch);
 
 	//INITIALIZE UPDATE FUNCTION
 
@@ -178,25 +181,54 @@ void Level0::createBackground()
 
 void Level0::update(float dt)
 {
+	//FACING UPDATE
+
+	if (Iniko->facingRight && !moveRight && !moveLeft)
+	{
+		Iniko->characterIdlerightspritebatch->setVisible(true);
+		Iniko->characterIdleleftspritebatch->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(false);
+		Iniko->characterRunningLeftspritebatch->setVisible(false);
+	}
+
+	if (!Iniko->facingRight && !moveRight && !moveLeft)
+	{
+		Iniko->characterIdlerightspritebatch->setVisible(false);
+		Iniko->characterIdleleftspritebatch->setVisible(true);
+		Iniko->characterRunningRightspritebatch->setVisible(false);
+		Iniko->characterRunningLeftspritebatch->setVisible(false);
+	}
+
 	//MOVEMENT UPDATE
 
 	if (moveRight && !moveCam)
 	{
+		Iniko->facingRight = true;
 		Iniko->characterMove(1);
-		Iniko->characterArt->setVisible(false);
+		//Iniko->characterArt->setVisible(false);
+		Iniko->characterIdlerightspritebatch->setVisible(false);
+		Iniko->characterIdleleftspritebatch->setVisible(false);
+		Iniko->characterRunningLeftspritebatch->setVisible(false);
 		Iniko->characterRunningRightspritebatch->setVisible(true);
 	}
 
 	if (moveLeft && !moveCam)
 	{
+		Iniko->facingRight = false;
 		Iniko->characterMove(2);
-		Iniko->characterArt->setVisible(false);
+		//Iniko->characterArt->setVisible(false);s
+		Iniko->characterIdlerightspritebatch->setVisible(false);
+		Iniko->characterIdleleftspritebatch->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(false);
 		Iniko->characterRunningLeftspritebatch->setVisible(true);
 	}
 
 	if (moveLeft && moveRight)
 	{
-		Iniko->characterArt->setVisible(true);
+		Iniko->facingRight = true;
+		//Iniko->characterArt->setVisible(true);
+		Iniko->characterIdlerightspritebatch->setVisible(true);
+		Iniko->characterIdleleftspritebatch->setVisible(false);
 		Iniko->characterRunningLeftspritebatch->setVisible(false);
 		Iniko->characterRunningRightspritebatch->setVisible(false);
 	}
@@ -266,7 +298,8 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		switch (bodyA->getTag()/100)
 		{
 			case 2:														//..AN OBJECT
-				changeCameraFollow(Iniko->characterArt);
+				//changeCameraFollow(Iniko->characterArt);
+				changeCameraFollow(Iniko->characterIdlerightspritebatch);
 				break;
 		}
 
@@ -282,7 +315,8 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		switch (bodyB->getTag()/100)
 		{
 			case 2:														//..AN OBJECT
-				changeCameraFollow(Iniko->characterArt);
+				//changeCameraFollow(Iniko->characterArt);
+				changeCameraFollow(Iniko->characterIdlerightspritebatch);
 				break;
 		}
 
@@ -379,23 +413,25 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			moveRight = false;
-			Iniko->characterArt->setVisible(true);
+			/*Iniko->characterArt->setVisible(true);
 			Iniko->characterRunningRightspritebatch->setVisible(false);
-			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);*/
 			break;
 
 		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			moveLeft = false;
-			Iniko->characterArt->setVisible(true);
+			/*Iniko->characterArt->setVisible(true);
 			Iniko->characterRunningLeftspritebatch->setVisible(false);
-			Iniko->characterRunningRightspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);*/
 			break;
 
 		case EventKeyboard::KeyCode::KEY_SPACE:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			moveCam = false;
-			changeCameraFollow(Iniko->characterArt);
+			//changeCameraFollow(Iniko->characterArt);
+			changeCameraFollow(Iniko->characterIdlerightspritebatch);
+			Iniko->characterVision->setPosition(Iniko->characterIdleRight->getPosition().x, Iniko->characterIdleRight->getPosition().y);
 			break;
 
 		case EventKeyboard::KeyCode::KEY_A:

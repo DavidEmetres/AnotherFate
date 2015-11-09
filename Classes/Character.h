@@ -10,9 +10,18 @@ class Character : public cocos2d::Layer
 public:
 	Size visibleSize;
 	Size factor;
+	bool facingRight;
 
 	Sprite* characterArt;
 	PhysicsBody* characterCollider;
+
+	Sprite* characterIdleRight;
+	PhysicsBody* characterIdleRightCollider;
+	SpriteBatchNode* characterIdlerightspritebatch;
+
+	Sprite* characterIdleLeft;
+	PhysicsBody* characterIdleLeftCollider;
+	SpriteBatchNode* characterIdleleftspritebatch;
 
 	Sprite* characterRunningRight;
 	PhysicsBody* characterRunningRightCollider;
