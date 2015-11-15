@@ -10,9 +10,9 @@ typedef struct tagResource
 }Resource;
 
 static cocos2d::CCSize designResolutionSize = cocos2d::CCSizeMake(1920, 1080);
-static Resource smallResolutionSize = { cocos2d::CCSizeMake(1280, 720), "Resolutions/HD/" };
-static Resource mediumResolutionSize = { cocos2d::CCSizeMake(1366, 768), "Resolutions/MedHD/" };
-static Resource largeResolutionSize = { cocos2d::CCSizeMake(1920, 1080), "Resolutions/FullHD/" };
+static Resource smallResolutionSize = { cocos2d::CCSizeMake(1280, 720), "/Resolutions/HD/" };
+static Resource mediumResolutionSize = { cocos2d::CCSizeMake(1366, 768), "/Resolutions/MedHD/" };
+static Resource largeResolutionSize = { cocos2d::CCSizeMake(1920, 1080), "/Resolutions/FullHD/" };
 
 AppDelegate::AppDelegate() {
 }
@@ -62,7 +62,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // Set the design resolution
 	Size frameSize = glview->getFrameSize();
-	glview->setFrameSize(designResolutionSize.width, designResolutionSize.height);
+	//glview->setFrameSize(designResolutionSize.width, designResolutionSize.height);
 	glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::EXACT_FIT);
 
 	std::vector<std::string> resDirectory;

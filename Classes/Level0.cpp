@@ -400,40 +400,16 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 
 void Level0::createAnimations()
 {
-	int res;
-
-	if (visibleSize.width >= 1920)				//CHECK RESOLUTION TO
-		res = 1;								//SELECT THE SPRITE SHEET
-	else if (visibleSize.width >= 1366)
-		res = 2;
-	else
-		res = 3;
-
-	char str[100] = { 0 };
-
-	float factor = 1;
-
-	switch (res)
-	{
-		case 2:
-			factor = 0.71111111111;
-			break;
-
-		case 3:
-			factor = 0.66666666666;
-			break;
-	}
-
 	//PORTAL PARTICLES
 
 	portalParticles = CCParticleSystemQuad::create("Particles/PortalParticles/portal_particle.plist");
-	portalParticles->setScale(factor * 0.4);
+	portalParticles->setScale(0.4);
 	portalParticles->setPosition(Point(1530, 338));
 	portalParticles->setPositionType(kCCPositionTypeRelative);
 	addChild(portalParticles, 1);
 
 	portalRayParticles = CCParticleSystemQuad::create("Particles/PortalRayParticles/portalray_particle.plist");
-	portalRayParticles->setScale(factor * 0.4);
+	portalRayParticles->setScale(0.4);
 	portalRayParticles->setPosition(Point(1535, 345));
 	portalRayParticles->setPositionType(kCCPositionTypeRelative);
 	addChild(portalRayParticles, 1);
