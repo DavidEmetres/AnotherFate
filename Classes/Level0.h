@@ -59,6 +59,7 @@ public:
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event);
 	bool onContactBegin(PhysicsContact &contact);
 	bool onContactSeparate(PhysicsContact &contact);
+	void setResolution(CCSize res);
 	
     static cocos2d::Scene* createScene();
 

@@ -32,7 +32,7 @@ void Character::characterMove(int direction)
 	switch (direction)
 	{
 		case 1:
-			newPos = Vec2(characterIdleRight->getPosition().x + 8.25, characterIdleRight->getPosition().y);
+			newPos = Vec2(characterIdleRight->getPosition().x + visibleSize.width/750, characterIdleRight->getPosition().y);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
@@ -42,7 +42,7 @@ void Character::characterMove(int direction)
 			break;
 
 		case 2:
-			newPos = Vec2(characterIdleRight->getPosition().x - 8.25, characterIdleRight->getPosition().y);
+			newPos = Vec2(characterIdleRight->getPosition().x - visibleSize.width/750, characterIdleRight->getPosition().y);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
@@ -74,11 +74,12 @@ void Character::moveCam(int direction)
 
 void Character::createAnimation()
 {
-	int res;								
+	int res;
+	float factor = Director::getInstance()->getContentScaleFactor();
 
-	if (visibleSize.width >= 1920)						//CHECK RESOLUTION TO
-		res = 1;										//SELECT THE SPRITE SHEET
-	else if (visibleSize.width >= 1366)
+	if (factor >= 1)
+		res = 1;
+	else if (factor >= 0.71)
 		res = 2;
 	else
 		res = 3;
