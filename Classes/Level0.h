@@ -16,7 +16,6 @@ private:
 
 public:
 	Size visibleSize;
-	Size factor;
 
 	Sprite* Layer0;
 	Sprite* Layer1;

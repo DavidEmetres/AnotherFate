@@ -5,21 +5,23 @@ USING_NS_CC;
 Character::Character()
 {
 	visibleSize = Director::getInstance()->getVisibleSize();
-	factor = Size(visibleSize.width / 1920, visibleSize.height / 1080);
 
 	facingRight = true;
 
 	createAnimation();
 
-	characterIdleRight->setPosition(Point(visibleSize.width / 2, (characterIdleRight->getContentSize().height / 2 + 80) * factor.height));
+	characterIdleRight->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
+	characterIdleLeft->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
+	characterRunningRight->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
+	characterRunningLeft->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
 
 	characterVision = Sprite::create();
-	characterVision->setPosition(Point(visibleSize.width / 2, (characterIdleRight->getContentSize().height / 2 + 80) * factor.height));
+	characterVision->setPosition(Point(visibleSize.width / 2, (characterIdleRight->getContentSize().height / 2 + 80)));
 
 	//CHARACTER GUI
 
 	AKey = Sprite::create("images/Characters/GUI/AKey.png");
-	AKey->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + (characterIdleRight->getContentSize().height/2 + 80) * factor.height));
+	AKey->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + (characterIdleRight->getContentSize().height/2 + 80)));
 	AKey->setVisible(false);
 }
 
@@ -27,11 +29,10 @@ void Character::characterMove(int direction)
 {
 	Vec2 newPos;
 
-
 	switch (direction)
 	{
 		case 1:
-			newPos = Vec2(characterIdleRight->getPosition().x + 2, characterIdleRight->getPosition().y);
+			newPos = Vec2(characterIdleRight->getPosition().x + 8.25, characterIdleRight->getPosition().y);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
@@ -41,7 +42,7 @@ void Character::characterMove(int direction)
 			break;
 
 		case 2:
-			newPos = Vec2(characterIdleRight->getPosition().x - 2, characterIdleRight->getPosition().y);
+			newPos = Vec2(characterIdleRight->getPosition().x - 8.25, characterIdleRight->getPosition().y);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
@@ -60,12 +61,12 @@ void Character::moveCam(int direction)
 	switch (direction)
 	{
 	case 1:
-		newPos = Vec2(characterVision->getPosition().x + (15 * factor.width), characterVision->getPosition().y);
+		newPos = Vec2(characterVision->getPosition().x + 15, characterVision->getPosition().y);
 		characterVision->setPosition(newPos);
 		break;
 
 	case 2:
-		newPos = Vec2(characterVision->getPosition().x - (15 * factor.width), characterVision->getPosition().y);
+		newPos = Vec2(characterVision->getPosition().x - 15, characterVision->getPosition().y);
 		characterVision->setPosition(newPos);
 		break;
 	}
@@ -73,10 +74,10 @@ void Character::moveCam(int direction)
 
 void Character::createAnimation()
 {
-	int res;
+	int res;								
 
-	if (visibleSize.width >= 1920)				//CHECK RESOLUTION TO
-		res = 1;								//SELECT THE SPRITE SHEET
+	if (visibleSize.width >= 1920)						//CHECK RESOLUTION TO
+		res = 1;										//SELECT THE SPRITE SHEET
 	else if (visibleSize.width >= 1366)
 		res = 2;
 	else
@@ -86,10 +87,10 @@ void Character::createAnimation()
 
 	//INIKO IDLE RIGHT
 
-	sprintf(str, "images/Characters/SpriteSheets/Iniko/Iniko_IdleRight/InikoIdle_Right%d.png", res);
+	sprintf(str, "SpriteSheets/Characters/Iniko/Iniko_IdleRight/InikoIdle_Right%d.png", res);
 	characterIdlerightspritebatch = SpriteBatchNode::create(str);
 	SpriteFrameCache* characterIdleRightcache = SpriteFrameCache::getInstance();
-	sprintf(str, "images/Characters/SpriteSheets/Iniko/Iniko_IdleRight/InikoIdle_Right%d.plist", res);
+	sprintf(str, "SpriteSheets/Characters/Iniko/Iniko_IdleRight/InikoIdle_Right%d.plist", res);
 	characterIdleRightcache->addSpriteFramesWithFile(str);
 
 	characterIdleRight = Sprite::createWithSpriteFrameName("InikoIdle_Right1.png");
@@ -108,7 +109,7 @@ void Character::createAnimation()
 	Animation* characterIdleRightanimation = Animation::createWithSpriteFrames(characterIdleRightanimFrames, 0.1f);
 	characterIdleRight->runAction(RepeatForever::create(Animate::create(characterIdleRightanimation)));
 
-	characterIdleRightCollider = PhysicsBody::createBox(Size((characterIdleRight->getContentSize().width) * factor.width, 301 * factor.height));
+	characterIdleRightCollider = PhysicsBody::createBox(Size((characterIdleRight->getContentSize().width), 301));
 	characterIdleRightCollider->setContactTestBitmask(true);
 	characterIdleRightCollider->setDynamic(true);
 	characterIdleRightCollider->setCollisionBitmask(0);
@@ -118,10 +119,10 @@ void Character::createAnimation()
 
 	//INIKO IDLE LEFT
 
-	sprintf(str, "images/Characters/SpriteSheets/Iniko/Iniko_IdleLeft/InikoIdle_Left%d.png", res);
+	sprintf(str, "SpriteSheets/Characters/Iniko/Iniko_IdleLeft/InikoIdle_Left%d.png", res);
 	characterIdleleftspritebatch = SpriteBatchNode::create(str);
 	SpriteFrameCache* characterIdleLeftcache = SpriteFrameCache::getInstance();
-	sprintf(str, "images/Characters/SpriteSheets/Iniko/Iniko_IdleLeft/InikoIdle_Left%d.plist", res);
+	sprintf(str, "SpriteSheets/Characters/Iniko/Iniko_IdleLeft/InikoIdle_Left%d.plist", res);
 	characterIdleLeftcache->addSpriteFramesWithFile(str);
 
 	characterIdleLeft = Sprite::createWithSpriteFrameName("InikoIdle_Left1.png");
@@ -140,7 +141,7 @@ void Character::createAnimation()
 	Animation* characterIdleLeftanimation = Animation::createWithSpriteFrames(characterIdleLeftanimFrames, 0.1f);
 	characterIdleLeft->runAction(RepeatForever::create(Animate::create(characterIdleLeftanimation)));
 
-	characterIdleLeftCollider = PhysicsBody::createBox(Size((characterIdleLeft->getContentSize().width) * factor.width, 301 * factor.height));
+	characterIdleLeftCollider = PhysicsBody::createBox(Size((characterIdleLeft->getContentSize().width), 301));
 	characterIdleLeftCollider->setContactTestBitmask(true);
 	characterIdleLeftCollider->setDynamic(true);
 	characterIdleLeftCollider->setCollisionBitmask(0);
@@ -150,10 +151,10 @@ void Character::createAnimation()
 
 	//INIKO RUNNING RIGHT
 
-	sprintf(str, "images/Characters/SpriteSheets/Iniko/InikoRunningRight/InikoRunningRight%d.png", res);
+	sprintf(str, "SpriteSheets/Characters/Iniko/InikoRunningRight/InikoRunningRight%d.png", res);
 	characterRunningRightspritebatch = SpriteBatchNode::create(str);
 	SpriteFrameCache* characterRunningRightcache = SpriteFrameCache::getInstance();
-	sprintf(str, "images/Characters/SpriteSheets/Iniko/InikoRunningRight/InikoRunningRight%d.plist", res);
+	sprintf(str, "SpriteSheets/Characters/Iniko/InikoRunningRight/InikoRunningRight%d.plist", res);
 	characterRunningRightcache->addSpriteFramesWithFile(str);
 
 	characterRunningRight = Sprite::createWithSpriteFrameName("InikoRunning_Right1.png");
@@ -172,7 +173,7 @@ void Character::createAnimation()
 	Animation* characterRunningRightanimation = Animation::createWithSpriteFrames(characterRunningRightanimFrames, 0.03f);
 	characterRunningRight->runAction(RepeatForever::create(Animate::create(characterRunningRightanimation)));
 
-	characterRunningRightCollider = PhysicsBody::createBox(Size((characterRunningRight->getContentSize().width) * factor.width, 304 * factor.height));
+	characterRunningRightCollider = PhysicsBody::createBox(Size((characterRunningRight->getContentSize().width), 304));
 	characterRunningRightCollider->setContactTestBitmask(true);
 	characterRunningRightCollider->setDynamic(true);
 	characterRunningRightCollider->setCollisionBitmask(0);
@@ -182,10 +183,10 @@ void Character::createAnimation()
 
 	//INIKO RUNNING LEFT
 
-	sprintf(str, "images/Characters/SpriteSheets/Iniko/InikoRunningLeft/InikoRunningLeft%d.png", res);
+	sprintf(str, "SpriteSheets/Characters/Iniko/InikoRunningLeft/InikoRunningLeft%d.png", res);
 	characterRunningLeftspritebatch = SpriteBatchNode::create(str);
 	SpriteFrameCache* characterRunningLeftcache = SpriteFrameCache::getInstance();
-	sprintf(str, "images/Characters/SpriteSheets/Iniko/InikoRunningLeft/InikoRunningLeft%d.plist", res);
+	sprintf(str, "SpriteSheets/Characters/Iniko/InikoRunningLeft/InikoRunningLeft%d.plist", res);
 	characterRunningLeftcache->addSpriteFramesWithFile(str);
 
 	characterRunningLeft = Sprite::createWithSpriteFrameName("InikoRunning_Left1.png");
@@ -204,7 +205,7 @@ void Character::createAnimation()
 	Animation* characterRunningLeftanimation = Animation::createWithSpriteFrames(characterRunningLeftanimFrames, 0.03f);
 	characterRunningLeft->runAction(RepeatForever::create(Animate::create(characterRunningLeftanimation)));
 
-	characterRunningLeftCollider = PhysicsBody::createBox(Size((characterRunningLeft->getContentSize().width) * factor.width, 304 * factor.height));
+	characterRunningLeftCollider = PhysicsBody::createBox(Size((characterRunningLeft->getContentSize().width), 304));
 	characterRunningLeftCollider->setContactTestBitmask(true);
 	characterRunningLeftCollider->setDynamic(true);
 	characterRunningLeftCollider->setCollisionBitmask(0);

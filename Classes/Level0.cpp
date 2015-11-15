@@ -25,7 +25,6 @@ bool Level0::init()
 	//INITIALIZE ATRIBUTES
 	
 	visibleSize = Director::getInstance()->getVisibleSize();
-	factor = Size(visibleSize.width / 1920, visibleSize.height / 1080);
 
 	moveRight = false;
 	moveLeft = false;
@@ -72,21 +71,17 @@ bool Level0::init()
 	//CREATE FLOOR
 
 	Layer3 = Sprite::create("images/Level0/Layers/Level0_Layer3.png");
-	Layer3->setScaleX(factor.width);
-	Layer3->setScaleY(factor.height);
-	Layer3->setPosition(Point((Layer3->getContentSize().width / 2) * factor.width, (Layer3->getContentSize().height / 2) * factor.height));
+	Layer3->setPosition(Point((Layer3->getContentSize().width / 2), (Layer3->getContentSize().height / 2) ));
 
 	addChild(Layer3, 3);
 
 	Floor = Sprite::create("images/Level0/Assets/FloorCollider.png");
-	Floor->setScaleX(factor.width);
-	Floor->setScaleY(factor.height);
-	Floor->setPosition(Point((Floor->getContentSize().width / 2) * factor.width, (Floor->getContentSize().height / 2) * factor.height));
+	Floor->setPosition(Point((Floor->getContentSize().width / 2), (Floor->getContentSize().height / 2)));
 	Floor->setVisible(false);
 
 	addChild(Floor, 3);
 
-	FloorCollider = PhysicsBody::createBox(Size(Floor->getContentSize().width * factor.width, Floor->getContentSize().height * factor.height));
+	FloorCollider = PhysicsBody::createBox(Size(Floor->getContentSize().width, Floor->getContentSize().height));
 	FloorCollider->setContactTestBitmask(true);
 	FloorCollider->setDynamic(true);
 	FloorCollider->setCollisionBitmask(0);
@@ -125,30 +120,22 @@ bool Level0::init()
 void Level0::createBackground()
 {
 	Layer0 = Sprite::create("images/Level0/Layers/Level0_Layer0.png");
-	Layer0->setScaleX(factor.width);
-	Layer0->setScaleY(factor.height);
-	Layer0->setPosition(Point((Layer0->getContentSize().width/2) * factor.width, (Layer0->getContentSize().height/2) * factor.height));
+	Layer0->setPosition(Point((Layer0->getContentSize().width/2), (Layer0->getContentSize().height/2)));
 
 	addChild(Layer0, 0);
 	
 	Layer1 = Sprite::create("images/Level0/Layers/Level0_Layer1.png");
-	Layer1->setScaleX(factor.width);
-	Layer1->setScaleY(factor.height);
-	Layer1->setPosition(Point((Layer1->getContentSize().width/2) * factor.width, (Layer1->getContentSize().height/2) * factor.height));
+	Layer1->setPosition(Point((Layer1->getContentSize().width/2), (Layer1->getContentSize().height/2)));
 
 	addChild(Layer1, 1);
 	
 	Layer2 = Sprite::create("images/Level0/Layers/Level0_Layer2.png");
-	Layer2->setScaleX(factor.width);
-	Layer2->setScaleY(factor.height);
-	Layer2->setPosition(Point((Layer2->getContentSize().width/2) * factor.width, (Layer2->getContentSize().height/2) * factor.height));
+	Layer2->setPosition(Point((Layer2->getContentSize().width/2), (Layer2->getContentSize().height/2)));
 
 	addChild(Layer2, 2);
 	
 	Layer4 = Sprite::create("images/Level0/Layers/Level0_Layer4.png");
-	Layer4->setScaleX(factor.width);
-	Layer4->setScaleY(factor.height);
-	Layer4->setPosition(Point((Layer4->getContentSize().width/2) * factor.width, (Layer4->getContentSize().height/2) * factor.height));
+	Layer4->setPosition(Point((Layer4->getContentSize().width/2), (Layer4->getContentSize().height/2)));
 
 	addChild(Layer4, 4);
 }
@@ -174,6 +161,8 @@ void Level0::update(float dt)
 	}
 
 	//MOVEMENT UPDATE
+
+	//Iniko->characterMove(2);
 
 	if (moveRight && !moveCam)
 	{
@@ -347,12 +336,12 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 
 void Level0::changeCameraFollow(Node* target)
 {
-	cameraFollow = this->runAction(Follow::create(target, Rect(0, visibleSize.height/2, Layer0->getContentSize().width * factor.width, 0)));
+	cameraFollow = this->runAction(Follow::create(target, Rect(0, visibleSize.height/2, Layer0->getContentSize().width, 0)));
 }
 
 void Level0::fixPosition(Node* image, Node* floor)
 {
-	image->setPosition(image->getPosition().x * factor.width, floor->getContentSize().height * factor.height + (image->getContentSize().height / 2 + 120) * factor.height);
+	image->setPosition(image->getPosition().x, floor->getContentSize().height + (image->getContentSize().height / 2 + 120));
 }
 
 void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
@@ -422,19 +411,30 @@ void Level0::createAnimations()
 
 	char str[100] = { 0 };
 
+	float factor = 1;
+
+	switch (res)
+	{
+		case 2:
+			factor = 0.71111111111;
+			break;
+
+		case 3:
+			factor = 0.66666666666;
+			break;
+	}
+
 	//PORTAL PARTICLES
 
-	portalParticles = CCParticleSystemQuad::create("images/Particles/PortalParticles/portal_particle.plist");
-	portalParticles->setPosition(Point(1530 * factor.height, 338 * factor.height));
-	portalParticles->setScaleX(factor.width * 0.4);
-	portalParticles->setScaleY(factor.height * 0.4);
+	portalParticles = CCParticleSystemQuad::create("Particles/PortalParticles/portal_particle.plist");
+	portalParticles->setScale(factor * 0.4);
+	portalParticles->setPosition(Point(1530, 338));
 	portalParticles->setPositionType(kCCPositionTypeRelative);
 	addChild(portalParticles, 1);
 
-	portalRayParticles = CCParticleSystemQuad::create("images/Particles/PortalRayParticles/portalray_particle.plist");
-	portalRayParticles->setPosition(Point(1535 * factor.height, 345 * factor.height));
-	portalRayParticles->setScaleX(factor.width * 0.42);
-	portalRayParticles->setScaleY(factor.height * 0.42);
+	portalRayParticles = CCParticleSystemQuad::create("Particles/PortalRayParticles/portalray_particle.plist");
+	portalRayParticles->setScale(factor * 0.4);
+	portalRayParticles->setPosition(Point(1535, 345));
 	portalRayParticles->setPositionType(kCCPositionTypeRelative);
 	addChild(portalRayParticles, 1);
 }

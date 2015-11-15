@@ -5,7 +5,6 @@ USING_NS_CC;
 Item::Item(int type, int posx, int posy)
 {
 	visibleSize = Director::getInstance()->getVisibleSize();
-	factor = Size(visibleSize.width / 1920, visibleSize.height / 1080);
 
 	itemType = type;
 	this->posx = posx;
@@ -15,7 +14,7 @@ Item::Item(int type, int posx, int posy)
 
 	createArt(itemType);
 
-	itemCollider = PhysicsBody::createBox(Size((itemArt->getContentSize().width) * factor.width, (itemArt->getContentSize().height) * factor.height));
+	itemCollider = PhysicsBody::createBox(Size((itemArt->getContentSize().width), (itemArt->getContentSize().height)));
 	itemCollider->setContactTestBitmask(true);
 	itemCollider->setDynamic(true);
 	itemCollider->setCollisionBitmask(0);
@@ -29,9 +28,7 @@ void Item::createArt(int type)
 	{
 		case 2:							//VASIJA PEQUEÑA
 			itemArt = Sprite::create("images/Level0/Assets/VasijaPequena.png");
-			itemArt->setScaleX(factor.width);
-			itemArt->setScaleY(factor.height);
-			itemArt->setPosition(Point(posx * factor.width, (posy + itemArt->getContentSize().height/2) * factor.height));
+			itemArt->setPosition(Point(posx, (posy + itemArt->getContentSize().height/2)));
 			break;
 	}
 }

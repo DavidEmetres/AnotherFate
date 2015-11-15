@@ -9,8 +9,9 @@ class Character : public cocos2d::Layer
 {
 public:
 	Size visibleSize;
-	Size factor;
 	bool facingRight;
+	Vec2 velocityDir;
+	float velocity;
 
 	PhysicsBody* characterCollider;
 
