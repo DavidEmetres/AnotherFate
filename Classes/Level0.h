@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "Character.h"
 #include "Item.h"
+#include "Enemy.h"
 
 USING_NS_CC;
 
@@ -35,6 +36,10 @@ public:
 	Item* vasijaPequeña2;
 	
 	Character* Iniko;
+
+	Vector<Enemy*> enemysVector;
+
+	Enemy* enemy1;
 
 	Action* cameraFollow;
 	Action* keyAction;

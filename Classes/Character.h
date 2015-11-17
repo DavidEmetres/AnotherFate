@@ -12,8 +12,21 @@ public:
 	bool facingRight;
 	Vec2 velocityDir;
 	float velocity;
+	bool visionCollideRight;
+	bool visionCollideLeft;
+	bool stealth;
 
-	PhysicsBody* characterCollider;
+	Sprite* runningSoundColliderSprite;
+	PhysicsBody* runningSoundCollider;
+
+	Sprite* visionColliderSpriteLeft;
+	PhysicsBody* visionColliderLeft;
+
+	Sprite* visionColliderSpriteRight;
+	PhysicsBody* visionColliderRight;
+
+	Sprite* characterVision;
+	PhysicsBody* characterVisionCollider;
 
 	Sprite* characterIdleRight;
 	PhysicsBody* characterIdleRightCollider;
@@ -30,12 +43,11 @@ public:
 	Sprite* characterRunningLeft;
 	PhysicsBody* characterRunningLeftCollider;
 	SpriteBatchNode* characterRunningLeftspritebatch;
-
-	Sprite* characterVision;
+	
 	Sprite* AKey;
 
-	void characterMove(int direction);
-	void moveCam(int direction);
+	void characterMove(int direction, float deltaTime);
+	void moveCam(int direction, float deltaTime);
 	void createAnimation();
 
 	Character();

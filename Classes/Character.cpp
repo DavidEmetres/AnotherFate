@@ -7,6 +7,9 @@ Character::Character()
 	visibleSize = Director::getInstance()->getVisibleSize();
 
 	facingRight = true;
+	visionCollideRight = false;
+	visionCollideLeft = false;
+	stealth = false;
 
 	createAnimation();
 
@@ -16,23 +19,69 @@ Character::Character()
 	characterRunningLeft->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
 
 	characterVision = Sprite::create();
-	characterVision->setPosition(Point(visibleSize.width / 2, (characterIdleRight->getContentSize().height / 2 + 80)));
+	characterVision->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
+	characterVisionCollider = PhysicsBody::createBox(Size(10, 10));
+	characterVisionCollider->setContactTestBitmask(true);
+	characterVisionCollider->setDynamic(true);
+	characterVisionCollider->setCollisionBitmask(0);
+	characterVisionCollider->setTag(03);
+
+	characterVision->setPhysicsBody(characterVisionCollider);
+
+	//CHARACTER COLLIDERS
+	//TAGS-> 00:CHARACTER COLLIDER; 01:RUNNING SOUND COLLIDER; 02:VISION BORDER COLLIDER; 03:VISION COLLIDER;
+
+	runningSoundColliderSprite = Sprite::create("images/Characters/Iniko/Colliders/RunningSoundCollider.png");
+	runningSoundColliderSprite->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y));
+	runningSoundCollider = PhysicsBody::createBox(Size(runningSoundColliderSprite->getContentSize().width, runningSoundColliderSprite->getContentSize().height));
+	runningSoundCollider->setContactTestBitmask(true);
+	runningSoundCollider->setDynamic(true);
+	runningSoundCollider->setCollisionBitmask(0);
+	runningSoundCollider->setTag(01);
+
+	runningSoundColliderSprite->setPhysicsBody(runningSoundCollider);
+
+	visionColliderSpriteLeft = Sprite::create("images/Characters/Iniko/Colliders/VisionCollider.png");
+	visionColliderSpriteLeft->setPosition(Point(characterIdleRight->getPosition().x - 900, characterIdleRight->getPosition().y));
+	visionColliderLeft = PhysicsBody::createBox(Size(visionColliderSpriteLeft->getContentSize().width, visionColliderSpriteLeft->getContentSize().height));
+	visionColliderLeft->setContactTestBitmask(true);
+	visionColliderLeft->setDynamic(true);
+	visionColliderLeft->setCollisionBitmask(0);
+	visionColliderLeft->setTag(02);
+
+	visionColliderSpriteLeft->setPhysicsBody(visionColliderLeft);
+
+	visionColliderSpriteRight = Sprite::create("images/Characters/Iniko/Colliders/VisionCollider.png");
+	visionColliderSpriteRight->setPosition(Point(characterIdleRight->getPosition().x + 900, characterIdleRight->getPosition().y));
+	visionColliderRight = PhysicsBody::createBox(Size(visionColliderSpriteRight->getContentSize().width, visionColliderSpriteRight->getContentSize().height));
+	visionColliderRight->setContactTestBitmask(true);
+	visionColliderRight->setDynamic(true);
+	visionColliderRight->setCollisionBitmask(0);
+	visionColliderRight->setTag(02);
+
+	visionColliderSpriteRight->setPhysicsBody(visionColliderRight);
 
 	//CHARACTER GUI
 
-	AKey = Sprite::create("images/Characters/GUI/AKey.png");
+	AKey = Sprite::create("images/Characters/Iniko/GUI/AKey.png");
 	AKey->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + (characterIdleRight->getContentSize().height/2 + 80)));
 	AKey->setVisible(false);
 }
 
-void Character::characterMove(int direction)
+void Character::characterMove(int direction, float deltaTime)
 {
 	Vec2 newPos;
 
 	switch (direction)
 	{
 		case 1:
-			newPos = Vec2(characterIdleRight->getPosition().x + visibleSize.width/750, characterIdleRight->getPosition().y);
+			if(stealth)
+				newPos = Vec2(characterIdleRight->getPosition().x + (200 * deltaTime), characterIdleRight->getPosition().y);
+			else
+				newPos = Vec2(characterIdleRight->getPosition().x + (800 * deltaTime), characterIdleRight->getPosition().y);
+			runningSoundColliderSprite->setPosition(newPos);
+			visionColliderSpriteLeft->setPosition(newPos.x - 900, newPos.y);
+			visionColliderSpriteRight->setPosition(newPos.x + 900, newPos.y);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
@@ -42,7 +91,13 @@ void Character::characterMove(int direction)
 			break;
 
 		case 2:
-			newPos = Vec2(characterIdleRight->getPosition().x - visibleSize.width/750, characterIdleRight->getPosition().y);
+			if(stealth)
+				newPos = Vec2(characterIdleRight->getPosition().x - (200 * deltaTime), characterIdleRight->getPosition().y);
+			else
+				newPos = Vec2(characterIdleRight->getPosition().x - (800 * deltaTime), characterIdleRight->getPosition().y);
+			runningSoundColliderSprite->setPosition(newPos);
+			visionColliderSpriteLeft->setPosition(newPos.x - 900, newPos.y);
+			visionColliderSpriteRight->setPosition(newPos.x + 900, newPos.y);
 			characterVision->setPosition(newPos);
 			characterRunningRight->setPosition(newPos);
 			characterRunningLeft->setPosition(newPos);
@@ -53,22 +108,21 @@ void Character::characterMove(int direction)
 	}
 }
 
-void Character::moveCam(int direction)
+void Character::moveCam(int direction, float deltaTime)
 {
 	Vec2 newPos;
 
-
 	switch (direction)
 	{
-	case 1:
-		newPos = Vec2(characterVision->getPosition().x + 15, characterVision->getPosition().y);
-		characterVision->setPosition(newPos);
-		break;
+		case 1:
+			newPos = Vec2(characterVision->getPosition().x + (1500 * deltaTime), characterVision->getPosition().y);
+			characterVision->setPosition(newPos);
+			break;
 
-	case 2:
-		newPos = Vec2(characterVision->getPosition().x - 15, characterVision->getPosition().y);
-		characterVision->setPosition(newPos);
-		break;
+		case 2:
+			newPos = Vec2(characterVision->getPosition().x - (1500 * deltaTime), characterVision->getPosition().y);
+			characterVision->setPosition(newPos);
+			break;
 	}
 }
 
@@ -114,7 +168,7 @@ void Character::createAnimation()
 	characterIdleRightCollider->setContactTestBitmask(true);
 	characterIdleRightCollider->setDynamic(true);
 	characterIdleRightCollider->setCollisionBitmask(0);
-	characterIdleRightCollider->setTag(0); //TAG 0 = CHARACTER
+	characterIdleRightCollider->setTag(00);
 
 	characterIdleRight->setPhysicsBody(characterIdleRightCollider);
 
@@ -146,7 +200,7 @@ void Character::createAnimation()
 	characterIdleLeftCollider->setContactTestBitmask(true);
 	characterIdleLeftCollider->setDynamic(true);
 	characterIdleLeftCollider->setCollisionBitmask(0);
-	characterIdleLeftCollider->setTag(0); //TAG 0 = CHARACTER
+	characterIdleLeftCollider->setTag(00);
 
 	characterIdleLeft->setPhysicsBody(characterIdleLeftCollider);
 
@@ -178,7 +232,7 @@ void Character::createAnimation()
 	characterRunningRightCollider->setContactTestBitmask(true);
 	characterRunningRightCollider->setDynamic(true);
 	characterRunningRightCollider->setCollisionBitmask(0);
-	characterRunningRightCollider->setTag(0); //TAG 0 = CHARACTER
+	characterRunningRightCollider->setTag(00);
 
 	characterRunningRight->setPhysicsBody(characterRunningRightCollider);
 
@@ -210,7 +264,7 @@ void Character::createAnimation()
 	characterRunningLeftCollider->setContactTestBitmask(true);
 	characterRunningLeftCollider->setDynamic(true);
 	characterRunningLeftCollider->setCollisionBitmask(0);
-	characterRunningLeftCollider->setTag(0); //TAG 0 = CHARACTER
+	characterRunningLeftCollider->setTag(00);
 
 	characterRunningLeft->setPhysicsBody(characterRunningLeftCollider);
 }

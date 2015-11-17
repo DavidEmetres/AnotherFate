@@ -61,12 +61,25 @@ bool Level0::init()
 
 	Iniko = new Character();
 
+	addChild(Iniko->runningSoundColliderSprite, 3);
+	addChild(Iniko->visionColliderSpriteLeft, 3);
+	addChild(Iniko->visionColliderSpriteRight, 3);
 	addChild(Iniko->characterIdlerightspritebatch, 3);
 	addChild(Iniko->characterRunningRightspritebatch, 3);
 	addChild(Iniko->characterIdleleftspritebatch, 3);
 	addChild(Iniko->characterRunningLeftspritebatch, 3);
 	addChild(Iniko->characterVision, 3);
 	addChild(Iniko->AKey, 3);
+
+	//CREATE ENEMYS
+
+	enemy1 = new Enemy();
+	enemysVector.pushBack(enemy1);
+	tag = 100 + enemysVector.getIndex(enemy1);
+	enemy1->enemyCollider->setTag(tag);
+	enemy1->enemyArt->setScaleX(-1);
+	addChild(enemy1->enemyArt, 3);
+	addChild(enemy1->detect, 3);
 
 	//CREATE FLOOR
 
@@ -162,27 +175,51 @@ void Level0::update(float dt)
 
 	//MOVEMENT UPDATE
 
-	//Iniko->characterMove(2);
+	//GENERAL MOVEMENT
 
-	if (moveRight && !moveCam)
+	if (moveRight && !moveCam && !Iniko->stealth)
 	{
 		Iniko->facingRight = true;
-		Iniko->characterMove(1);
+		Iniko->characterMove(1, dt);
 		Iniko->characterIdlerightspritebatch->setVisible(false);
 		Iniko->characterIdleleftspritebatch->setVisible(false);
 		Iniko->characterRunningLeftspritebatch->setVisible(false);
 		Iniko->characterRunningRightspritebatch->setVisible(true);
 	}
 
-	if (moveLeft && !moveCam)
+	if (moveLeft && !moveCam && !Iniko->stealth)
 	{
 		Iniko->facingRight = false;
-		Iniko->characterMove(2);
+		Iniko->characterMove(2, dt);
 		Iniko->characterIdlerightspritebatch->setVisible(false);
 		Iniko->characterIdleleftspritebatch->setVisible(false);
 		Iniko->characterRunningRightspritebatch->setVisible(false);
 		Iniko->characterRunningLeftspritebatch->setVisible(true);
 	}
+
+	//STEALTH MOVEMENT
+
+	if (moveRight && !moveCam && Iniko->stealth)
+	{
+		Iniko->facingRight = true;
+		Iniko->characterMove(1, dt);
+		Iniko->characterIdlerightspritebatch->setVisible(false);
+		Iniko->characterIdleleftspritebatch->setVisible(false);
+		Iniko->characterRunningLeftspritebatch->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(true);
+	}
+
+	if (moveLeft && !moveCam && Iniko->stealth)
+	{
+		Iniko->facingRight = false;
+		Iniko->characterMove(2, dt);
+		Iniko->characterIdlerightspritebatch->setVisible(false);
+		Iniko->characterIdleleftspritebatch->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(false);
+		Iniko->characterRunningLeftspritebatch->setVisible(true);
+	}
+
+	//STOPS IF MOVE IN TWO DIRECTIONS
 
 	if (moveLeft && moveRight)
 	{
@@ -193,20 +230,36 @@ void Level0::update(float dt)
 		Iniko->characterRunningRightspritebatch->setVisible(false);
 	}
 
-	if (moveRight && moveCam)
+	//CAMERA MOVEMENT
+
+	if (moveRight && moveCam && !Iniko->visionCollideRight)
 	{
-		Iniko->moveCam(1);
+		Iniko->facingRight = true;
+		Iniko->characterIdlerightspritebatch->setVisible(true);
+		Iniko->characterIdleleftspritebatch->setVisible(false);
+		Iniko->characterRunningLeftspritebatch->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(false);
+		Iniko->moveCam(1, dt);
 	}
 	
-	if (moveLeft && moveCam)
+	if (moveLeft && moveCam && !Iniko->visionCollideLeft)
 	{
-		Iniko->moveCam(2);
+		Iniko->facingRight = false;
+		Iniko->characterIdlerightspritebatch->setVisible(false);
+		Iniko->characterIdleleftspritebatch->setVisible(true);
+		Iniko->characterRunningLeftspritebatch->setVisible(false);
+		Iniko->characterRunningRightspritebatch->setVisible(false);
+		Iniko->moveCam(2, dt);
 	}
 
 	//COLLISION UPDATE
 
 	switch (contactBody->getTag() / 100)
 	{
+		case 1:
+			enemysVector.at(contactBody->getTag() - 100)->detectCharacter();
+			break;
+
 		case 2:
 			if (key == 'A')
 			{
@@ -215,6 +268,18 @@ void Level0::update(float dt)
 				break;
 			}
 	}
+
+	//CHECK RUNNING SOUND IF NOT STEALTH
+
+	if (Iniko->stealth || (!moveRight && !moveLeft))
+		Iniko->runningSoundCollider->setEnable(false);
+
+	else
+		Iniko->runningSoundCollider->setEnable(true);
+
+	//TESTING COLLISIONS UPDATE
+
+	enemy1->detect->setPositionX(enemy1->enemyArt->getPosition().x);
 }
 
 void Level0::setPhysicsWorld(PhysicsWorld *world)
@@ -228,30 +293,85 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	auto bodyA = contact.getShapeA()->getBody();
 	auto bodyB = contact.getShapeB()->getBody();
 
-	if (bodyA->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
+	if (bodyA->getTag() == 00)											//IF CHARACTER COLLIDES WITH..
 	{
-		contactBody = bodyB;
-
 		switch (bodyB->getTag()/100)
 		{
+			/*case 1:														//..AN ENEMY
+				contactBody = bodyB;
+				break;*/
+
 			case 2:														//..AN OBJECT
+				contactBody = bodyB;
 				Iniko->AKey->setVisible(true);
 				break;
 		}
 	}
 
-	if (bodyB->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
+	if (bodyB->getTag() == 00)											//IF CHARACTER COLLIDES WITH..
 	{
-		contactBody = bodyA;
-
 		switch (bodyA->getTag()/100)
 		{
+			/*case 1:														//..AN ENEMY
+				contactBody = bodyA;
+				break;*/
+
 			case 2:														//..AN OBJECT
+				contactBody = bodyA;
 				Iniko->AKey->setVisible(true);
 				break;
 		}
 	}
 
+	if (bodyA->getTag() == 01)											//IF CHARACTER RUNNING SOUND COLLIDES WITH..
+	{
+		switch (bodyB->getTag() / 100)
+		{
+			case 1:														//..AN ENEMY
+				contactBody = bodyB;
+				break;
+		}
+	}
+
+	if (bodyB->getTag() == 01)											//IF CHARACTER RUNNING SOUND COLLIDES WITH..
+	{
+		switch (bodyA->getTag() / 100)
+		{
+			case 1:														//..AN ENEMY
+				contactBody = bodyA;
+				break;
+		}
+	}
+
+	if (bodyA->getTag() == 03)											//IF CHARACTER VISION COLLIDES WITH..
+	{
+		switch (bodyB->getTag())
+		{
+			case 02:													//..VISION COLLIDER
+				if (moveRight)
+					Iniko->visionCollideRight = true;
+
+				else if (moveLeft)
+					Iniko->visionCollideLeft = true;
+
+				break;
+		}
+	}
+
+	if (bodyB->getTag() == 03)											//IF CHARACTER VISION COLLIDES WITH..
+	{
+		switch (bodyA->getTag())
+		{
+			case 02:													//..VISION COLLIDER
+				if (moveRight)
+					Iniko->visionCollideRight = true;
+
+				else if (moveLeft)
+					Iniko->visionCollideLeft = true;
+
+				break;
+		}
+	}
 
 	if (bodyB->getTag() == -1)											//IF FLOOR COLLIDES WITH..
 	{
@@ -299,22 +419,82 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	auto bodyA = contact.getShapeA()->getBody();
 	auto bodyB = contact.getShapeB()->getBody();
 
-	if (bodyA->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
+	if (bodyA->getTag() == 00)											//IF CHARACTER STOPS TO COLLIDES WITH..
 	{
 		switch (bodyB->getTag() / 100)
 		{
+			case 1:														//..AN ENEMY
+				contactBody = PhysicsBody::create();
+				break;
+
 			case 2:														//..AN OBJECT
+				Iniko->AKey->setVisible(false);
+				contactBody = PhysicsBody::create();
+				break;
+		}
+	}
+
+	if (bodyB->getTag() == 00)											//IF CHARACTER STOPS TO COLLIDES WITH..
+	{
+		switch (bodyA->getTag() / 100)
+		{
+			case 1:														//..AN ENEMY
+				contactBody = PhysicsBody::create();
+				break;
+
+			case 2:														//..AN OBJECT
+				Iniko->AKey->setVisible(false);
+				contactBody = PhysicsBody::create();
+				break;
+		}
+	}
+
+	if (bodyA->getTag() == 01)											//IF CHARACTER RUNNING SOUND STOPS TO COLLIDES WITH..
+	{
+		switch (bodyB->getTag() / 100)
+		{
+			case 2:															//..AN OBJECT
 				Iniko->AKey->setVisible(false);
 				break;
 		}
 	}
 
-	if (bodyB->getTag() == 0)											//IF CHARACTER COLLIDES WITH..
+	if (bodyB->getTag() == 01)											//IF CHARACTER RUNNING SOUND STOPS TO COLLIDES WITH..
 	{
 		switch (bodyA->getTag() / 100)
 		{
-			case 2:														//..AN OBJECT
+			case 2:															//..AN OBJECT
 				Iniko->AKey->setVisible(false);
+				break;
+		}
+	}
+
+	if (bodyA->getTag() == 03)											//IF CHARACTER VISION STOPS TO COLLIDES WITH..
+	{
+		switch (bodyB->getTag())
+		{
+			case 02:													//..VISION COLLIDER
+				if (moveLeft)
+					Iniko->visionCollideRight = false;
+
+				else if (moveRight)
+					Iniko->visionCollideLeft = false;
+
+				break;
+		}
+	}
+
+	if (bodyB->getTag() == 03)											//IF CHARACTER VISION STOPS TO COLLIDES WITH..
+	{
+		switch (bodyA->getTag())
+		{
+			case 02:													//..VISION COLLIDER
+				if (moveLeft)
+					Iniko->visionCollideRight = false;
+
+				else if (moveRight)
+					Iniko->visionCollideLeft = false;
+
 				break;
 		}
 	}
@@ -329,14 +509,12 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 		bodyB->setGravityEnable(true);
 	}
 
-	contactBody = PhysicsBody::create();
-
 	return true;
 }
 
 void Level0::changeCameraFollow(Node* target)
 {
-	cameraFollow = this->runAction(Follow::create(target, Rect(0, visibleSize.height/2, Layer0->getContentSize().width, 0)));
+	cameraFollow = this->runAction(Follow::create(target, Rect(0, visibleSize.height / 2, Layer0->getContentSize().width, 0)));
 }
 
 void Level0::fixPosition(Node* image, Node* floor)
@@ -360,7 +538,13 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 
 		case EventKeyboard::KeyCode::KEY_SPACE:
 			moveCam = true;
+			Iniko->visionCollideLeft = false;
+			Iniko->visionCollideRight = false;
 			changeCameraFollow(Iniko->characterVision);
+			break;
+
+		case EventKeyboard::KeyCode::KEY_SHIFT:
+			Iniko->stealth = true;
 			break;
 
 		case EventKeyboard::KeyCode::KEY_A:
@@ -387,8 +571,15 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 		case EventKeyboard::KeyCode::KEY_SPACE:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			moveCam = false;
+			Iniko->visionCollideLeft = false;
+			Iniko->visionCollideRight = false;
 			changeCameraFollow(Iniko->characterIdleRight);
 			Iniko->characterVision->setPosition(Iniko->characterIdleRight->getPosition().x, Iniko->characterIdleRight->getPosition().y);
+			break;
+
+		case EventKeyboard::KeyCode::KEY_SHIFT:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			Iniko->stealth = false;
 			break;
 
 		case EventKeyboard::KeyCode::KEY_A:
