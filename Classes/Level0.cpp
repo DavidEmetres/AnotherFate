@@ -30,7 +30,7 @@ bool Level0::init()
 	moveLeft = false;
 	moveCam = false;
 	key = ' ';
-	curDetail = 5;
+	AKeyCounter = 0;
 	contactBody = PhysicsBody::create();
 
 	//CREATE BACKGROUND LAYERS
@@ -47,15 +47,21 @@ bool Level0::init()
 
 	vasijaPequeña1 = new Item(2, 1397, 90);
 	objectsVector.pushBack(vasijaPequeña1);
-	tag = (vasijaPequeña1->itemType * 100) + objectsVector.getIndex(vasijaPequeña1);
+	tag = (vasijaPequeña1->itemType * 1000) + objectsVector.getIndex(vasijaPequeña1);
 	vasijaPequeña1->itemCollider->setTag(tag);
 	addChild(vasijaPequeña1->itemArt, 3);
 
 	vasijaPequeña2 = new Item(2, 1800, 90);
 	objectsVector.pushBack(vasijaPequeña2);
-	tag = (vasijaPequeña2->itemType * 100) + objectsVector.getIndex(vasijaPequeña2);
+	tag = (vasijaPequeña1->itemType * 1000) + objectsVector.getIndex(vasijaPequeña2);
 	vasijaPequeña2->itemCollider->setTag(tag);
 	addChild(vasijaPequeña2->itemArt, 3);
+
+	vasijaGrande1 = new Item(3, 3100, 90);
+	objectsVector.pushBack(vasijaGrande1);
+	tag = (vasijaGrande1->itemType * 1000) + objectsVector.getIndex(vasijaGrande1);
+	vasijaGrande1->itemCollider->setTag(tag);
+	addChild(vasijaGrande1->itemArt, 3);
 
 	//CREATE CHARACTER
 
@@ -73,13 +79,25 @@ bool Level0::init()
 
 	//CREATE ENEMYS
 
-	enemy1 = new Enemy();
+	enemy1 = new Enemy(3000, 5000, 2.0f, 5, 1);
 	enemysVector.pushBack(enemy1);
-	tag = 100 + enemysVector.getIndex(enemy1);
+	tag = 1000 + enemysVector.getIndex(enemy1);
 	enemy1->enemyCollider->setTag(tag);
-	enemy1->enemyArt->setScaleX(-1);
 	addChild(enemy1->enemyArt, 3);
 	addChild(enemy1->detect, 3);
+	tag += 100;
+	enemy1->enemyVisionCollider->setTag(tag);
+	addChild(enemy1->enemyVision, 3);
+
+	enemy2 = new Enemy(5000, 3000, 2.0f, 5, 1);
+	enemysVector.pushBack(enemy2);
+	tag = 1000 + enemysVector.getIndex(enemy2);
+	enemy2->enemyCollider->setTag(tag);
+	addChild(enemy2->enemyArt, 3);
+	addChild(enemy2->detect, 3);
+	tag += 100;
+	enemy2->enemyVisionCollider->setTag(tag);
+	addChild(enemy2->enemyVision, 3);
 
 	//CREATE FLOOR
 
@@ -175,6 +193,13 @@ void Level0::update(float dt)
 
 	//MOVEMENT UPDATE
 
+	//ENEMY MOVEMENT
+
+	for (int i = 0; i < enemysVector.size(); i++)
+	{
+		enemysVector.at(i)->moveVision();
+	}
+
 	//GENERAL MOVEMENT
 
 	if (moveRight && !moveCam && !Iniko->stealth)
@@ -256,22 +281,42 @@ void Level0::update(float dt)
 
 	switch (contactBody->getTag() / 100)
 	{
-		case 1:
-			enemysVector.at(contactBody->getTag() - 100)->detectCharacter();
+		case 20:														//THROWABLE OBJECT
+			if (key == ' ' && AKeyCounter > 0)
+			{
+				objectsVector.at(contactBody->getTag() - 2000)->getThrow(Iniko->facingRight, AKeyCounter);
+				changeCameraFollow(contactBody->getNode());
+			}
 			break;
 
-		case 2:
-			if (key == 'A')
+		case 30:														//OBJECTO TO HIDE
+			if (key == 'U')
 			{
-				objectsVector.at(contactBody->getTag() - 200)->getThrow(Iniko->facingRight);
-				changeCameraFollow(contactBody->getNode());
-				break;
+				if (!Iniko->hide)
+					Iniko->getHide(true);
 			}
+			break;
 	}
 
-	//CHECK RUNNING SOUND IF NOT STEALTH
+	//KEY PRESSED HANDLER
 
-	if (Iniko->stealth || (!moveRight && !moveLeft))
+	if (key == 'A' && (contactBody->getTag() / 100) == 20)
+	{
+		AKeyCounter += 500 * dt;
+	}
+
+	else
+		AKeyCounter = 0;
+
+	if (Iniko->hide)
+	{
+		if (key == 'D')
+			Iniko->getHide(false);
+	}
+
+	//CHECK RUNNING SOUND
+
+	if (Iniko->stealth || (!moveRight && !moveLeft) || Iniko->hide)
 		Iniko->runningSoundCollider->setEnable(false);
 
 	else
@@ -280,6 +325,7 @@ void Level0::update(float dt)
 	//TESTING COLLISIONS UPDATE
 
 	enemy1->detect->setPositionX(enemy1->enemyArt->getPosition().x);
+	enemy2->detect->setPositionX(enemy2->enemyArt->getPosition().x);
 }
 
 void Level0::setPhysicsWorld(PhysicsWorld *world)
@@ -297,13 +343,13 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	{
 		switch (bodyB->getTag()/100)
 		{
-			/*case 1:														//..AN ENEMY
-				contactBody = bodyB;
-				break;*/
-
-			case 2:														//..AN OBJECT
+			case 20:													//..A THROWABLE OBJECT
 				contactBody = bodyB;
 				Iniko->AKey->setVisible(true);
+				break;
+
+			case 30:													//..AN OBJECT TO HIDE
+				contactBody = bodyB;
 				break;
 		}
 	}
@@ -312,13 +358,13 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	{
 		switch (bodyA->getTag()/100)
 		{
-			/*case 1:														//..AN ENEMY
-				contactBody = bodyA;
-				break;*/
-
-			case 2:														//..AN OBJECT
+			case 20:													//..A THROWABLE OBJECT
 				contactBody = bodyA;
 				Iniko->AKey->setVisible(true);
+				break;
+
+			case 30:													//..AN OBJECT TO HIDE
+				contactBody = bodyA;
 				break;
 		}
 	}
@@ -327,8 +373,8 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	{
 		switch (bodyB->getTag() / 100)
 		{
-			case 1:														//..AN ENEMY
-				contactBody = bodyB;
+			case 10:													//..AN ENEMY
+				enemysVector.at(bodyB->getTag() - 1000)->detectCharacter();
 				break;
 		}
 	}
@@ -337,8 +383,8 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	{
 		switch (bodyA->getTag() / 100)
 		{
-			case 1:														//..AN ENEMY
-				contactBody = bodyA;
+			case 10:													//..AN ENEMY
+				enemysVector.at(bodyA->getTag() - 1000)->detectCharacter();
 				break;
 		}
 	}
@@ -373,13 +419,33 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		}
 	}
 
+	if (bodyA->getTag() / 100 == 11)									//IF ENEMY VISION COLLIDES WITH..
+	{
+		switch (bodyB->getTag())
+		{
+			case 00:													//..CHARACTER
+				enemysVector.at(bodyA->getTag() - 1100)->detectCharacter();
+				break;
+		}
+	}
+
+	if (bodyB->getTag() / 100 == 11)									//IF ENEMY VISION COLLIDES WITH..
+	{
+		switch (bodyA->getTag())
+		{
+			case 00:													//..CHARACTER
+				enemysVector.at(bodyB->getTag() - 1100)->detectCharacter();
+				break;
+		}
+	}
+
 	if (bodyB->getTag() == -1)											//IF FLOOR COLLIDES WITH..
 	{
 		switch (bodyA->getTag()/100)
 		{
-			case 2:														//..AN OBJECT
-				if(objectsVector.at(bodyA->getTag() - 200)->thrown)
-					removeChild(objectsVector.at(bodyA->getTag() - 200)->itemArt);
+			case 20:													//..AN OBJECT
+				if(objectsVector.at(bodyA->getTag() - 2000)->thrown)
+					removeChild(objectsVector.at(bodyA->getTag() - 2000)->itemArt);
 
 				changeCameraFollow(Iniko->characterIdleRight);
 				break;
@@ -396,9 +462,9 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 	{
 		switch (bodyB->getTag()/100)
 		{
-			case 2:														//..AN OBJECT
-				if (objectsVector.at(bodyB->getTag() - 200)->thrown)
-					removeChild(objectsVector.at(bodyB->getTag() - 200)->itemArt);
+			case 20:													//..AN OBJECT
+				if (objectsVector.at(bodyB->getTag() - 2000)->thrown)
+					removeChild(objectsVector.at(bodyB->getTag() - 2000)->itemArt);
 
 				changeCameraFollow(Iniko->characterIdleRight);
 				break;
@@ -423,11 +489,11 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	{
 		switch (bodyB->getTag() / 100)
 		{
-			case 1:														//..AN ENEMY
+			case 30:													//..AN OBJECT TO HIDE
 				contactBody = PhysicsBody::create();
 				break;
 
-			case 2:														//..AN OBJECT
+			case 20:													//..A THROWABLE OBJECT
 				Iniko->AKey->setVisible(false);
 				contactBody = PhysicsBody::create();
 				break;
@@ -438,11 +504,11 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	{
 		switch (bodyA->getTag() / 100)
 		{
-			case 1:														//..AN ENEMY
+			case 30:													//..AN OBJECT TO HIDE
 				contactBody = PhysicsBody::create();
 				break;
 
-			case 2:														//..AN OBJECT
+			case 20:													//..A THROWABLE OBJECT
 				Iniko->AKey->setVisible(false);
 				contactBody = PhysicsBody::create();
 				break;
@@ -453,9 +519,7 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	{
 		switch (bodyB->getTag() / 100)
 		{
-			case 2:															//..AN OBJECT
-				Iniko->AKey->setVisible(false);
-				break;
+
 		}
 	}
 
@@ -463,9 +527,7 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	{
 		switch (bodyA->getTag() / 100)
 		{
-			case 2:															//..AN OBJECT
-				Iniko->AKey->setVisible(false);
-				break;
+
 		}
 	}
 
@@ -549,6 +611,15 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 
 		case EventKeyboard::KeyCode::KEY_A:
 			key = 'A';
+			break;
+
+		case EventKeyboard::KeyCode::KEY_UP_ARROW:
+			key = 'U';
+			this->runAction(Sequence::create(DelayTime::create(0.001f), CallFunc::create(CC_CALLBACK_0(Level0::keyNull, this)), NULL));
+			break;
+
+		case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+			key = 'D';
 			this->runAction(Sequence::create(DelayTime::create(0.001f), CallFunc::create(CC_CALLBACK_0(Level0::keyNull, this)), NULL));
 			break;
 	}
@@ -583,6 +654,19 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 			break;
 
 		case EventKeyboard::KeyCode::KEY_A:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			key = ' ';
+			AKeyCounter += 600;
+			if (AKeyCounter > 1100)
+				AKeyCounter = 1100;
+			break;
+
+		case EventKeyboard::KeyCode::KEY_UP_ARROW:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			key = ' ';
+			break;
+
+		case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			key = ' ';
 			break;

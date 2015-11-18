@@ -34,12 +34,14 @@ public:
 
 	Item* vasijaPequeña1;
 	Item* vasijaPequeña2;
+	Item* vasijaGrande1;
 	
 	Character* Iniko;
 
 	Vector<Enemy*> enemysVector;
 
 	Enemy* enemy1;
+	Enemy* enemy2;
 
 	Action* cameraFollow;
 	Action* keyAction;
@@ -49,7 +51,7 @@ public:
 	bool moveLeft;
 	bool moveCam;
 	char key;
-	float curDetail;
+	int AKeyCounter;
 	PhysicsBody* contactBody;
 	
 	void update(float dt);

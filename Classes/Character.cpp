@@ -10,6 +10,7 @@ Character::Character()
 	visionCollideRight = false;
 	visionCollideLeft = false;
 	stealth = false;
+	hide = false;
 
 	createAnimation();
 
@@ -71,40 +72,35 @@ Character::Character()
 void Character::characterMove(int direction, float deltaTime)
 {
 	Vec2 newPos;
-
-	switch (direction)
+	
+	if (!hide)
 	{
-		case 1:
-			if(stealth)
-				newPos = Vec2(characterIdleRight->getPosition().x + (200 * deltaTime), characterIdleRight->getPosition().y);
-			else
-				newPos = Vec2(characterIdleRight->getPosition().x + (800 * deltaTime), characterIdleRight->getPosition().y);
-			runningSoundColliderSprite->setPosition(newPos);
-			visionColliderSpriteLeft->setPosition(newPos.x - 900, newPos.y);
-			visionColliderSpriteRight->setPosition(newPos.x + 900, newPos.y);
-			characterVision->setPosition(newPos);
-			characterRunningRight->setPosition(newPos);
-			characterRunningLeft->setPosition(newPos);
-			characterIdleRight->setPosition(newPos);
-			characterIdleLeft->setPosition(newPos);
-			AKey->setPositionX(newPos.x);
-			break;
+		switch (direction)
+		{
+			case 1:
+				if (stealth)
+					newPos = Vec2(characterIdleRight->getPosition().x + (200 * deltaTime), characterIdleRight->getPosition().y);
+				else
+					newPos = Vec2(characterIdleRight->getPosition().x + (800 * deltaTime), characterIdleRight->getPosition().y);
+				break;
 
-		case 2:
-			if(stealth)
-				newPos = Vec2(characterIdleRight->getPosition().x - (200 * deltaTime), characterIdleRight->getPosition().y);
-			else
-				newPos = Vec2(characterIdleRight->getPosition().x - (800 * deltaTime), characterIdleRight->getPosition().y);
-			runningSoundColliderSprite->setPosition(newPos);
-			visionColliderSpriteLeft->setPosition(newPos.x - 900, newPos.y);
-			visionColliderSpriteRight->setPosition(newPos.x + 900, newPos.y);
-			characterVision->setPosition(newPos);
-			characterRunningRight->setPosition(newPos);
-			characterRunningLeft->setPosition(newPos);
-			characterIdleRight->setPosition(newPos);
-			characterIdleLeft->setPosition(newPos);
-			AKey->setPositionX(newPos.x);
-			break;
+			case 2:
+				if (stealth)
+					newPos = Vec2(characterIdleRight->getPosition().x - (200 * deltaTime), characterIdleRight->getPosition().y);
+				else
+					newPos = Vec2(characterIdleRight->getPosition().x - (800 * deltaTime), characterIdleRight->getPosition().y);
+				break;
+		}
+
+		runningSoundColliderSprite->setPosition(newPos);
+		visionColliderSpriteLeft->setPosition(newPos.x - 900, newPos.y);
+		visionColliderSpriteRight->setPosition(newPos.x + 900, newPos.y);
+		characterVision->setPosition(newPos);
+		characterRunningRight->setPosition(newPos);
+		characterRunningLeft->setPosition(newPos);
+		characterIdleRight->setPosition(newPos);
+		characterIdleLeft->setPosition(newPos);
+		AKey->setPositionX(newPos.x);
 	}
 }
 
@@ -124,6 +120,33 @@ void Character::moveCam(int direction, float deltaTime)
 			characterVision->setPosition(newPos);
 			break;
 	}
+}
+
+void Character::getHide(bool in)
+{
+	bool b;
+
+	if (in)
+	{
+		b = false;
+		hide = true;
+	}
+
+	else
+	{
+		b = true;
+		hide = false;
+	}
+
+	runningSoundCollider->setEnable(b);
+	characterIdleRight->setVisible(b);
+	characterIdleRightCollider->setEnable(b);
+	characterIdleLeft->setVisible(b);
+	characterIdleLeftCollider->setEnable(b);
+	characterRunningRight->setVisible(b);
+	characterRunningRightCollider->setEnable(b);
+	characterRunningLeft->setVisible(b);
+	characterRunningLeftCollider->setEnable(b);
 }
 
 void Character::createAnimation()

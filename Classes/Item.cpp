@@ -26,27 +26,32 @@ void Item::createArt(int type)
 {
 	switch (type)
 	{
-		case 2:							//VASIJA PEQUEÑA
+		case 2:																				//VASIJA PEQUEÑA
 			itemArt = Sprite::create("images/Level0/Assets/VasijaPequena.png");
 			itemArt->setPosition(Point(posx, (posy + itemArt->getContentSize().height/2)));
+			break;
+
+		case 3:																				//VASIJA GRANDE
+			itemArt = Sprite::create("images/Level0/Assets/VasijaGrande.png");
+			itemArt->setPosition(Point(posx, (posy + itemArt->getContentSize().height / 2)));
 			break;
 	}
 }
 
-void Item::getThrow(bool direction)
+void Item::getThrow(bool direction, int force)
 {
 	itemArt->setPosition(Point(itemArt->getPosition().x, itemArt->getPosition().y + 5));
 
 	if (direction)
 	{
-		itemCollider->setVelocity(Vec2(600, 600));
-		itemArt->runAction(RotateBy::create(2.0f, 360));
+		itemCollider->setVelocity(Vec2(force, force));
+		itemArt->runAction(RotateBy::create(4.0f, 720));
 	}
 
 	else
 	{
-		itemCollider->setVelocity(Vec2(-600, 600));
-		itemArt->runAction(RotateBy::create(2.0f, -360));
+		itemCollider->setVelocity(Vec2(-force, force));
+		itemArt->runAction(RotateBy::create(4.0f, -720));
 	}
 
 	thrown = true;

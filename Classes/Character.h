@@ -15,6 +15,7 @@ public:
 	bool visionCollideRight;
 	bool visionCollideLeft;
 	bool stealth;
+	bool hide;
 
 	Sprite* runningSoundColliderSprite;
 	PhysicsBody* runningSoundCollider;
@@ -48,6 +49,7 @@ public:
 
 	void characterMove(int direction, float deltaTime);
 	void moveCam(int direction, float deltaTime);
+	void getHide(bool in);
 	void createAnimation();
 
 	Character();

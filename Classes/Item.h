@@ -19,7 +19,7 @@ public:
 	bool thrown;
 
 	void createArt(int type);
-	void getThrow(bool direction);
+	void getThrow(bool direction, int force);
 
 	Item(int type, int posx, int posy);
 };
