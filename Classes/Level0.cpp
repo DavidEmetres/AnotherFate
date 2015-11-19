@@ -63,18 +63,23 @@ bool Level0::init()
 	vasijaGrande1->itemCollider->setTag(tag);
 	addChild(vasijaGrande1->itemArt, 3);
 
+	jumpZone1 = new Item(4, 1230, 90);
+	objectsVector.pushBack(jumpZone1);
+	tag = (jumpZone1->itemType * 1000) + objectsVector.getIndex(jumpZone1);
+	jumpZone1->itemCollider->setTag(tag);
+	jumpZone1->force = Vec2(200, 950);
+	jumpZone1->right = true;
+	addChild(jumpZone1->itemArt, 3);
+
 	//CREATE CHARACTER
 
 	Iniko = new Character();
 
 	addChild(Iniko->runningSoundColliderSprite, 3);
-	addChild(Iniko->visionColliderSpriteLeft, 3);
-	addChild(Iniko->visionColliderSpriteRight, 3);
 	addChild(Iniko->characterIdlerightspritebatch, 3);
 	addChild(Iniko->characterRunningRightspritebatch, 3);
 	addChild(Iniko->characterIdleleftspritebatch, 3);
 	addChild(Iniko->characterRunningLeftspritebatch, 3);
-	addChild(Iniko->characterVision, 3);
 	addChild(Iniko->AKey, 3);
 
 	//CREATE ENEMYS
@@ -99,14 +104,14 @@ bool Level0::init()
 	enemy2->enemyVisionCollider->setTag(tag);
 	addChild(enemy2->enemyVision, 3);
 
-	//CREATE FLOOR
+	//CREATE FLOOR AND WALLS COLLIDERS
 
 	Layer3 = Sprite::create("images/Level0/Layers/Level0_Layer3.png");
 	Layer3->setPosition(Point((Layer3->getContentSize().width / 2), (Layer3->getContentSize().height / 2) ));
 
 	addChild(Layer3, 3);
 
-	Floor = Sprite::create("images/Level0/Assets/FloorCollider.png");
+	Floor = Sprite::create("images/Level0/Colliders/FloorCollider.png");
 	Floor->setPosition(Point((Floor->getContentSize().width / 2), (Floor->getContentSize().height / 2)));
 	Floor->setVisible(false);
 
@@ -120,7 +125,67 @@ bool Level0::init()
 	FloorCollider->setTag(-1);
 
 	Floor->setPhysicsBody(FloorCollider);
-	
+
+	Wall1 = Sprite::create("images/Level0/Colliders/WallCollider1.png");
+	Wall1->setPosition(Point(Wall1->getContentSize().width/2, (visibleSize.height - Wall1->getContentSize().height/2)));
+	Wall1->setVisible(false);
+
+	addChild(Wall1, 3);
+
+	WallCollider1 = PhysicsBody::createBox(Size(Wall1->getContentSize().width, Wall1->getContentSize().height));
+	WallCollider1->setContactTestBitmask(true);
+	WallCollider1->setDynamic(true);
+	WallCollider1->setCollisionBitmask(0);
+	WallCollider1->setGravityEnable(false);
+	WallCollider1->setTag(-2);
+
+	Wall1->setPhysicsBody(WallCollider1);
+
+	Wall2 = Sprite::create("images/Level0/Colliders/WallCollider1.png");
+	Wall2->setPosition(Point(11472, (visibleSize.height - Wall2->getContentSize().height / 2)));
+	Wall2->setVisible(false);
+
+	addChild(Wall2, 3);
+
+	WallCollider2 = PhysicsBody::createBox(Size(Wall1->getContentSize().width, Wall1->getContentSize().height));
+	WallCollider2->setContactTestBitmask(true);
+	WallCollider2->setDynamic(true);
+	WallCollider2->setCollisionBitmask(0);
+	WallCollider2->setGravityEnable(false);
+	WallCollider2->setTag(-2);
+
+	Wall2->setPhysicsBody(WallCollider2);
+
+	Wall3 = Sprite::create("images/Level0/Colliders/WallCollider3.png");
+	Wall3->setPosition(Point((Layer0->getContentSize().width - Wall3->getContentSize().width/2), Wall3->getContentSize().height/2));
+	Wall3->setVisible(false);
+
+	addChild(Wall3, 3);
+
+	WallCollider3 = PhysicsBody::createBox(Size(Wall3->getContentSize().width, Wall3->getContentSize().height));
+	WallCollider3->setContactTestBitmask(true);
+	WallCollider3->setDynamic(true);
+	WallCollider3->setCollisionBitmask(0);
+	WallCollider3->setGravityEnable(false);
+	WallCollider3->setTag(-2);
+
+	Wall3->setPhysicsBody(WallCollider3);
+
+	DrinkMachineColliderSprite = Sprite::create("images/Level0/Colliders/MaquinaRefrescosCollider.png");
+	DrinkMachineColliderSprite->setPosition(Point(1310 + DrinkMachineColliderSprite->getContentSize().width/2, 497 - DrinkMachineColliderSprite->getContentSize().height/2));
+	//DrinkMachineColliderSprite->setVisible(false);
+
+	addChild(DrinkMachineColliderSprite, 3);
+
+	DrinkMachineCollider = PhysicsBody::createBox(Size(DrinkMachineColliderSprite->getContentSize().width, DrinkMachineColliderSprite->getContentSize().height));
+	DrinkMachineCollider->setContactTestBitmask(true);
+	DrinkMachineCollider->setDynamic(true);
+	DrinkMachineCollider->setCollisionBitmask(0);
+	DrinkMachineCollider->setGravityEnable(false);
+	DrinkMachineCollider->setTag(-1);
+
+	DrinkMachineColliderSprite->setPhysicsBody(DrinkMachineCollider);
+
 	//CREATE VIRTUAL CAMERA
 
 	changeCameraFollow(Iniko->characterIdlerightspritebatch);
@@ -255,28 +320,6 @@ void Level0::update(float dt)
 		Iniko->characterRunningRightspritebatch->setVisible(false);
 	}
 
-	//CAMERA MOVEMENT
-
-	if (moveRight && moveCam && !Iniko->visionCollideRight)
-	{
-		Iniko->facingRight = true;
-		Iniko->characterIdlerightspritebatch->setVisible(true);
-		Iniko->characterIdleleftspritebatch->setVisible(false);
-		Iniko->characterRunningLeftspritebatch->setVisible(false);
-		Iniko->characterRunningRightspritebatch->setVisible(false);
-		Iniko->moveCam(1, dt);
-	}
-	
-	if (moveLeft && moveCam && !Iniko->visionCollideLeft)
-	{
-		Iniko->facingRight = false;
-		Iniko->characterIdlerightspritebatch->setVisible(false);
-		Iniko->characterIdleleftspritebatch->setVisible(true);
-		Iniko->characterRunningLeftspritebatch->setVisible(false);
-		Iniko->characterRunningRightspritebatch->setVisible(false);
-		Iniko->moveCam(2, dt);
-	}
-
 	//COLLISION UPDATE
 
 	switch (contactBody->getTag() / 100)
@@ -296,6 +339,28 @@ void Level0::update(float dt)
 					Iniko->getHide(true);
 			}
 			break;
+
+		case 40:
+			if (key == 'S')
+			{
+				Iniko->jump(objectsVector.at(contactBody->getTag() - 4000)->force, objectsVector.at(contactBody->getTag() - 4000)->right);
+			}
+			break;
+	}
+
+	if (Iniko->wallTouch != NULL)
+	{
+		if (!Iniko->facingRight && Iniko->characterIdleRight->getPosition().x > Iniko->wallTouch->getPosition().x)
+		{
+			moveLeft = false;
+			Iniko->characterIdleRight->setPosition(Point(Iniko->wallTouch->getPosition().x + Iniko->wallTouch->getContentSize().width / 2 + Iniko->characterIdleRight->getContentSize().width / 2, Iniko->characterIdleRight->getPosition().y));
+		}
+
+		else if (Iniko->facingRight && Iniko->characterIdleRight->getPosition().x < Iniko->wallTouch->getPosition().x)
+		{
+			moveRight = false;
+			Iniko->characterIdleRight->setPosition(Point(Iniko->wallTouch->getPosition().x - Iniko->wallTouch->getContentSize().width / 2 - Iniko->characterIdleRight->getContentSize().width / 2, Iniko->characterIdleRight->getPosition().y));
+		}
 	}
 
 	//KEY PRESSED HANDLER
@@ -326,6 +391,17 @@ void Level0::update(float dt)
 
 	enemy1->detect->setPositionX(enemy1->enemyArt->getPosition().x);
 	enemy2->detect->setPositionX(enemy2->enemyArt->getPosition().x);
+
+	//ZOOM OUT UPDATE
+
+	if (this->getScale() == 0.5)
+	{
+		Point screenCenter = Point(visibleSize.width / 2, visibleSize.height / 2);
+		Point offSetToCenter = ccpSub(screenCenter, Iniko->characterIdleRight->getPosition());
+
+		this->setPosition(ccpMult(offSetToCenter, this->getScale()));
+		this->setPosition(ccpSub(this->getPosition(), ccpMult(offSetToCenter, (0.5 - this->getScale()) / (0.5 - 1.0f))));
+	}
 }
 
 void Level0::setPhysicsWorld(PhysicsWorld *world)
@@ -351,6 +427,10 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 			case 30:													//..AN OBJECT TO HIDE
 				contactBody = bodyB;
 				break;
+
+			case 40:													//..A JUMP ZONE
+				contactBody = bodyB;
+				break;
 		}
 	}
 
@@ -364,6 +444,10 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 				break;
 
 			case 30:													//..AN OBJECT TO HIDE
+				contactBody = bodyA;
+				break;
+
+			case 40:													//..A JUMP ZONE
 				contactBody = bodyA;
 				break;
 		}
@@ -385,36 +469,6 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		{
 			case 10:													//..AN ENEMY
 				enemysVector.at(bodyA->getTag() - 1000)->detectCharacter();
-				break;
-		}
-	}
-
-	if (bodyA->getTag() == 03)											//IF CHARACTER VISION COLLIDES WITH..
-	{
-		switch (bodyB->getTag())
-		{
-			case 02:													//..VISION COLLIDER
-				if (moveRight)
-					Iniko->visionCollideRight = true;
-
-				else if (moveLeft)
-					Iniko->visionCollideLeft = true;
-
-				break;
-		}
-	}
-
-	if (bodyB->getTag() == 03)											//IF CHARACTER VISION COLLIDES WITH..
-	{
-		switch (bodyA->getTag())
-		{
-			case 02:													//..VISION COLLIDER
-				if (moveRight)
-					Iniko->visionCollideRight = true;
-
-				else if (moveLeft)
-					Iniko->visionCollideLeft = true;
-
 				break;
 		}
 	}
@@ -453,9 +507,21 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 
 		//DEFAULT ACTIONS TO EVERYONE
 
-		bodyA->setVelocity(Vec2::ZERO);
-		bodyA->setGravityEnable(false);
-		fixPosition(bodyA->getNode(), bodyB->getNode());
+		if (bodyA->getTag() == 00)
+		{
+			if (!Iniko->jumping || (Iniko->jumping && (Iniko->characterIdleRight->getPosition().y - Iniko->characterIdleRight->getContentSize().height / 2) > (bodyB->getNode()->getPosition().y + bodyB->getNode()->getContentSize().height / 2)))
+			{
+				bodyA->setVelocity(Vec2::ZERO);
+				bodyA->setGravityEnable(false);
+				Iniko->jumping = false;
+			}
+		}
+
+		else
+		{
+			bodyA->setVelocity(Vec2::ZERO);
+			bodyA->setGravityEnable(false);
+		}
 	}
 
 	if (bodyA->getTag() == -1)											//IF FLOOR COLLIDES WITH..
@@ -472,9 +538,53 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 
 		//DEFAULT ACTIONS TO EVERYONE
 
-		bodyB->setVelocity(Vec2::ZERO);
-		bodyB->setGravityEnable(false);
-		fixPosition(bodyB->getNode(), bodyA->getNode());
+		if (bodyB->getTag() == 00)
+		{
+			if (!Iniko->jumping || (Iniko->jumping && (Iniko->characterIdleRight->getPosition().y - Iniko->characterIdleRight->getContentSize().height / 2) > (bodyA->getNode()->getPosition().y + bodyA->getNode()->getContentSize().height / 2)))
+			{
+				bodyB->setVelocity(Vec2::ZERO);
+				bodyB->setGravityEnable(false);
+				Iniko->jumping = false;
+			}
+		}
+
+		else
+		{
+			bodyB->setVelocity(Vec2::ZERO);
+			bodyB->setGravityEnable(false);
+		}
+	}
+
+	if (bodyB->getTag() == -2)											//IF WALL COLLIDES WITH..
+	{
+		if(bodyA->getTag() == 00)										//CHARACTER
+			Iniko->wallTouch = bodyB->getNode();
+
+		switch (bodyA->getTag() / 100)
+		{
+			case 20:													//..AN OBJECT
+				if (objectsVector.at(bodyA->getTag() - 2000)->thrown)
+					removeChild(objectsVector.at(bodyA->getTag() - 2000)->itemArt);
+
+				changeCameraFollow(Iniko->characterIdleRight);
+				break;
+		}
+	}
+
+	if (bodyA->getTag() == -2)											//IF WALL COLLIDES WITH..
+	{
+		if (bodyB->getTag() == 00)										//CHARACTER
+			Iniko->wallTouch = bodyA->getNode();
+
+		switch (bodyB->getTag() / 100)
+		{
+			case 20:													//..AN OBJECT
+				if (objectsVector.at(bodyB->getTag() - 2000)->thrown)
+					removeChild(objectsVector.at(bodyB->getTag() - 2000)->itemArt);
+
+				changeCameraFollow(Iniko->characterIdleRight);
+				break;
+		}
 	}
 
 	return true;
@@ -489,6 +599,10 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	{
 		switch (bodyB->getTag() / 100)
 		{
+			case 40:													//..A JUMP ZONE
+				contactBody = PhysicsBody::create();
+				break;
+
 			case 30:													//..AN OBJECT TO HIDE
 				contactBody = PhysicsBody::create();
 				break;
@@ -504,6 +618,10 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 	{
 		switch (bodyA->getTag() / 100)
 		{
+			case 40:													//..A JUMP ZONE
+				contactBody = PhysicsBody::create();
+				break;
+
 			case 30:													//..AN OBJECT TO HIDE
 				contactBody = PhysicsBody::create();
 				break;
@@ -531,44 +649,36 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 		}
 	}
 
-	if (bodyA->getTag() == 03)											//IF CHARACTER VISION STOPS TO COLLIDES WITH..
+	if (bodyB->getTag() == -2)											//IF WALL STOPS TO COLLIDES WITH..
 	{
-		switch (bodyB->getTag())
-		{
-			case 02:													//..VISION COLLIDER
-				if (moveLeft)
-					Iniko->visionCollideRight = false;
-
-				else if (moveRight)
-					Iniko->visionCollideLeft = false;
-
-				break;
-		}
+		if (bodyA->getTag() == 00)										//CHARACTER
+			Iniko->wallTouch = NULL;
 	}
 
-	if (bodyB->getTag() == 03)											//IF CHARACTER VISION STOPS TO COLLIDES WITH..
+	if (bodyA->getTag() == -2)											//IF WALL STOPS TO COLLIDES WITH..
 	{
-		switch (bodyA->getTag())
-		{
-			case 02:													//..VISION COLLIDER
-				if (moveLeft)
-					Iniko->visionCollideRight = false;
-
-				else if (moveRight)
-					Iniko->visionCollideLeft = false;
-
-				break;
-		}
+		if (bodyB->getTag() == 00)										//CHARACTER
+			Iniko->wallTouch = NULL;
 	}
 
 	if (bodyB->getTag() == -1)											//IF FLOOR STOPS TO COLLIDES WITH..
 	{
 		bodyA->setGravityEnable(true);
+
+		if (bodyA->getTag() == 00)
+		{
+			Iniko->jumping = true;
+		}
 	}
 
 	if (bodyA->getTag() == -1)											//IF FLOOR STOPS TO COLLIDES WITH..
 	{
 		bodyB->setGravityEnable(true);
+
+		if (bodyB->getTag() == 00)
+		{
+			Iniko->jumping = true;
+		}
 	}
 
 	return true;
@@ -579,15 +689,10 @@ void Level0::changeCameraFollow(Node* target)
 	cameraFollow = this->runAction(Follow::create(target, Rect(0, visibleSize.height / 2, Layer0->getContentSize().width, 0)));
 }
 
-void Level0::fixPosition(Node* image, Node* floor)
-{
-	image->setPosition(image->getPosition().x, floor->getContentSize().height + (image->getContentSize().height / 2 + 120));
-}
-
 void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 {
 	_pressedKey = keyCode;
-
+	
 	switch (_pressedKey)
 	{
 		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
@@ -599,10 +704,8 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 			break;
 
 		case EventKeyboard::KeyCode::KEY_SPACE:
+			this->setScale(0.5);
 			moveCam = true;
-			Iniko->visionCollideLeft = false;
-			Iniko->visionCollideRight = false;
-			changeCameraFollow(Iniko->characterVision);
 			break;
 
 		case EventKeyboard::KeyCode::KEY_SHIFT:
@@ -611,6 +714,11 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 
 		case EventKeyboard::KeyCode::KEY_A:
 			key = 'A';
+			break;
+
+		case EventKeyboard::KeyCode::KEY_S:
+			key = 'S';
+			this->runAction(Sequence::create(DelayTime::create(0.001f), CallFunc::create(CC_CALLBACK_0(Level0::keyNull, this)), NULL));
 			break;
 
 		case EventKeyboard::KeyCode::KEY_UP_ARROW:
@@ -641,11 +749,8 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 
 		case EventKeyboard::KeyCode::KEY_SPACE:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			this->setScale(1);
 			moveCam = false;
-			Iniko->visionCollideLeft = false;
-			Iniko->visionCollideRight = false;
-			changeCameraFollow(Iniko->characterIdleRight);
-			Iniko->characterVision->setPosition(Iniko->characterIdleRight->getPosition().x, Iniko->characterIdleRight->getPosition().y);
 			break;
 
 		case EventKeyboard::KeyCode::KEY_SHIFT:
@@ -659,6 +764,11 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 			AKeyCounter += 600;
 			if (AKeyCounter > 1100)
 				AKeyCounter = 1100;
+			break;
+
+		case EventKeyboard::KeyCode::KEY_S:
+			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+			key = ' ';
 			break;
 
 		case EventKeyboard::KeyCode::KEY_UP_ARROW:
@@ -679,13 +789,13 @@ void Level0::createAnimations()
 
 	portalParticles = CCParticleSystemQuad::create("Particles/PortalParticles/portal_particle.plist");
 	portalParticles->setScale(0.4);
-	portalParticles->setPosition(Point(1530, 338));
+	portalParticles->setPosition(Point(2370, 338));
 	portalParticles->setPositionType(kCCPositionTypeRelative);
 	addChild(portalParticles, 1);
 
 	portalRayParticles = CCParticleSystemQuad::create("Particles/PortalRayParticles/portalray_particle.plist");
 	portalRayParticles->setScale(0.4);
-	portalRayParticles->setPosition(Point(1535, 345));
+	portalRayParticles->setPosition(Point(2370, 345));
 	portalRayParticles->setPositionType(kCCPositionTypeRelative);
 	addChild(portalRayParticles, 1);
 }

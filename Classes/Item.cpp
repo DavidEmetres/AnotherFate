@@ -9,6 +9,8 @@ Item::Item(int type, int posx, int posy)
 	itemType = type;
 	this->posx = posx;
 	this->posy = posy;
+	force = Vec2::ZERO;
+	right = true;
 
 	thrown = false;
 
@@ -34,6 +36,11 @@ void Item::createArt(int type)
 		case 3:																				//VASIJA GRANDE
 			itemArt = Sprite::create("images/Level0/Assets/VasijaGrande.png");
 			itemArt->setPosition(Point(posx, (posy + itemArt->getContentSize().height / 2)));
+			break;
+
+		case 4:																				//OBJETO SALTO
+			itemArt = Sprite::create();
+			itemArt->setPosition(Point(posx, posy));
 			break;
 	}
 }

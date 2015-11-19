@@ -22,9 +22,18 @@ public:
 	Sprite* Layer1;
 	Sprite* Layer2;
 	Sprite* Layer3;
+	Sprite* Layer4;
+
 	Sprite* Floor;
 	PhysicsBody* FloorCollider;
-	Sprite* Layer4;
+	Sprite* Wall1;
+	PhysicsBody* WallCollider1;
+	Sprite* Wall2;
+	PhysicsBody* WallCollider2;
+	Sprite* Wall3;
+	PhysicsBody* WallCollider3;
+	Sprite* DrinkMachineColliderSprite;
+	PhysicsBody* DrinkMachineCollider;
 	
 	Sprite* Portal1;
 	CCParticleSystemQuad* portalParticles;
@@ -35,6 +44,7 @@ public:
 	Item* vasijaPequeña1;
 	Item* vasijaPequeña2;
 	Item* vasijaGrande1;
+	Item* jumpZone1;
 	
 	Character* Iniko;
 
@@ -57,7 +67,6 @@ public:
 	void update(float dt);
 	void createBackground();
 	void changeCameraFollow(Node* target);
-	void fixPosition(Node* image, Node* floor);
 	void createAnimations();
 	void keyNull();
 
@@ -66,7 +75,6 @@ public:
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event);
 	bool onContactBegin(PhysicsContact &contact);
 	bool onContactSeparate(PhysicsContact &contact);
-	void setResolution(CCSize res);
 	
     static cocos2d::Scene* createScene();
 

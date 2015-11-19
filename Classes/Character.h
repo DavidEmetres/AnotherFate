@@ -12,22 +12,13 @@ public:
 	bool facingRight;
 	Vec2 velocityDir;
 	float velocity;
-	bool visionCollideRight;
-	bool visionCollideLeft;
 	bool stealth;
 	bool hide;
+	bool jumping;
+	Node* wallTouch;
 
 	Sprite* runningSoundColliderSprite;
 	PhysicsBody* runningSoundCollider;
-
-	Sprite* visionColliderSpriteLeft;
-	PhysicsBody* visionColliderLeft;
-
-	Sprite* visionColliderSpriteRight;
-	PhysicsBody* visionColliderRight;
-
-	Sprite* characterVision;
-	PhysicsBody* characterVisionCollider;
 
 	Sprite* characterIdleRight;
 	PhysicsBody* characterIdleRightCollider;
@@ -48,9 +39,9 @@ public:
 	Sprite* AKey;
 
 	void characterMove(int direction, float deltaTime);
-	void moveCam(int direction, float deltaTime);
 	void getHide(bool in);
 	void createAnimation();
+	void jump(Vec2 force, bool right);
 
 	Character();
 };

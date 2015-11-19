@@ -10,10 +10,13 @@ class Item : public cocos2d::Layer
 public:
 	Size visibleSize;
 
-	Sprite* itemArt;
 	int itemType;
 	int posx;
 	int posy;
+	Vec2 force;
+	bool right;
+
+	Sprite* itemArt;
 	PhysicsBody* itemCollider;
 
 	bool thrown;
