@@ -15,6 +15,7 @@ public:
 	int type;
 	int displacement;
 	bool facingRight;
+	bool die;
 
 	Sprite* enemyArt;
 	PhysicsBody* enemyCollider;

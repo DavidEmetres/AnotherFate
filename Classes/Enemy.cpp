@@ -22,13 +22,14 @@ Enemy::Enemy(int posInitial, int posFinal, float waitingTime, int velocity, int 
 		displacement = posInitial - posFinal;
 	}
 
+	die = false;
+
 	createAnimation(type);
 
 	//CREATE COLLIDERS
-	//TAGS-> 10:ENEMY; 11:ENEMY VISION;
+	//TAGS-> 10:ENEMY; 11:ENEMY VISION; 12:ENEMY KILL COLLIDER;
 
 	enemyVision = Sprite::create("images/Characters/Enemy1/Colliders/Enemy1Vision.png");
-	
 	enemyVision->setPosition(Point(enemyArt->getContentSize().width/2 + enemyVision->getContentSize().width/2, enemyArt->getPosition().y));
 
 	enemyVisionCollider = PhysicsBody::createBox(Size(enemyVision->getContentSize().width, enemyVision->getContentSize().height));
@@ -100,9 +101,13 @@ void Enemy::detectCharacter()
 
 void Enemy::moveVision()
 {
-	if(facingRight)
+	if (facingRight)
+	{
 		enemyVision->setPosition(Point(enemyArt->getPosition().x + (enemyArt->getContentSize().width / 2 + enemyVision->getContentSize().width / 2), enemyArt->getPosition().y));
+	}
 
 	else
-		enemyVision->setPosition(Point(enemyArt->getPosition().x + (enemyArt->getContentSize().width / 2 + enemyVision->getContentSize().width / 2) * (-1), enemyArt->getPosition().y));
+	{
+		enemyVision->setPosition(Point(enemyArt->getPosition().x - (enemyArt->getContentSize().width / 2 + enemyVision->getContentSize().width / 2), enemyArt->getPosition().y));
+	}
 }

@@ -53,6 +53,8 @@ public:
 	Enemy* enemy1;
 	Enemy* enemy2;
 
+	Node* followObject;
+
 	Action* cameraFollow;
 	Action* keyAction;
 	CCCallFunc* actionCall;
@@ -62,8 +64,11 @@ public:
 	bool moveCam;
 	char key;
 	int AKeyCounter;
+
 	PhysicsBody* contactBody;
-	
+	PhysicsBody* contactFloor;
+	PhysicsBody* contactEnemy;
+
 	void update(float dt);
 	void createBackground();
 	void changeCameraFollow(Node* target);

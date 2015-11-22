@@ -20,7 +20,7 @@ Character::Character()
 	characterRunningLeft->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
 
 	//CHARACTER COLLIDERS
-	//TAGS-> 00:CHARACTER COLLIDER; 01:RUNNING SOUND COLLIDER; 02:VISION BORDER COLLIDER; 03:VISION COLLIDER;
+	//TAGS-> 9000:CHARACTER COLLIDER; 9100:RUNNING SOUND COLLIDER; 9002:VISION BORDER COLLIDER; 9003:VISION COLLIDER;
 
 	runningSoundColliderSprite = Sprite::create("images/Characters/Iniko/Colliders/RunningSoundCollider.png");
 	runningSoundColliderSprite->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y));
@@ -28,47 +28,22 @@ Character::Character()
 	runningSoundCollider->setContactTestBitmask(true);
 	runningSoundCollider->setDynamic(true);
 	runningSoundCollider->setCollisionBitmask(0);
-	runningSoundCollider->setTag(01);
+	runningSoundCollider->setTag(9100);
 
 	runningSoundColliderSprite->setPhysicsBody(runningSoundCollider);
 
 	//CHARACTER GUI
 
+	characterVision = Sprite::create();
+	characterVision->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y));
+
 	AKey = Sprite::create("images/Characters/Iniko/GUI/AKey.png");
 	AKey->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + (characterIdleRight->getContentSize().height/2 + 80)));
 	AKey->setVisible(false);
-}
 
-void Character::characterMove(int direction, float deltaTime)
-{
-	Vec2 newPos;
-	
-	if (!hide)
-	{
-		switch (direction)
-		{
-			case 1:
-				if (stealth)
-					newPos = Vec2(characterIdleRight->getPosition().x + (200 * deltaTime), characterIdleRight->getPosition().y);
-				else
-					newPos = Vec2(characterIdleRight->getPosition().x + (800 * deltaTime), characterIdleRight->getPosition().y);
-				break;
-
-			case 2:
-				if (stealth)
-					newPos = Vec2(characterIdleRight->getPosition().x - (200 * deltaTime), characterIdleRight->getPosition().y);
-				else
-					newPos = Vec2(characterIdleRight->getPosition().x - (800 * deltaTime), characterIdleRight->getPosition().y);
-				break;
-		}
-
-		runningSoundColliderSprite->setPosition(newPos);
-		characterRunningRight->setPosition(newPos);
-		characterRunningLeft->setPosition(newPos);
-		characterIdleRight->setPosition(newPos);
-		characterIdleLeft->setPosition(newPos);
-		AKey->setPositionX(newPos.x);
-	}
+	SKey = Sprite::create("images/Characters/Iniko/GUI/SKey.png");
+	SKey->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + (characterIdleRight->getContentSize().height / 2 + 150)));
+	SKey->setVisible(false);
 }
 
 void Character::getHide(bool in)
@@ -104,12 +79,14 @@ void Character::jump(Vec2 force, bool right)
 	{
 		characterIdleRight->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + 5));
 		characterIdleRightCollider->setVelocity(force);
+		jumping = true;
 	}
 
 	else if (!right && !facingRight)
 	{
 		characterIdleRight->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + 5));
 		characterIdleRightCollider->setVelocity(force);
+		jumping = true;
 	}
 }
 
@@ -155,7 +132,7 @@ void Character::createAnimation()
 	characterIdleRightCollider->setContactTestBitmask(true);
 	characterIdleRightCollider->setDynamic(true);
 	characterIdleRightCollider->setCollisionBitmask(0);
-	characterIdleRightCollider->setTag(00);
+	characterIdleRightCollider->setTag(9000);
 
 	characterIdleRight->setPhysicsBody(characterIdleRightCollider);
 
@@ -187,7 +164,7 @@ void Character::createAnimation()
 	characterIdleLeftCollider->setContactTestBitmask(true);
 	characterIdleLeftCollider->setDynamic(true);
 	characterIdleLeftCollider->setCollisionBitmask(0);
-	characterIdleLeftCollider->setTag(00);
+	characterIdleLeftCollider->setTag(9000);
 
 	characterIdleLeft->setPhysicsBody(characterIdleLeftCollider);
 
@@ -219,7 +196,7 @@ void Character::createAnimation()
 	characterRunningRightCollider->setContactTestBitmask(true);
 	characterRunningRightCollider->setDynamic(true);
 	characterRunningRightCollider->setCollisionBitmask(0);
-	characterRunningRightCollider->setTag(00);
+	characterRunningRightCollider->setTag(9000);
 
 	characterRunningRight->setPhysicsBody(characterRunningRightCollider);
 
@@ -251,7 +228,7 @@ void Character::createAnimation()
 	characterRunningLeftCollider->setContactTestBitmask(true);
 	characterRunningLeftCollider->setDynamic(true);
 	characterRunningLeftCollider->setCollisionBitmask(0);
-	characterRunningLeftCollider->setTag(00);
+	characterRunningLeftCollider->setTag(9000);
 
 	characterRunningLeft->setPhysicsBody(characterRunningLeftCollider);
 }

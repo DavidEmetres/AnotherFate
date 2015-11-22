@@ -36,9 +36,11 @@ public:
 	PhysicsBody* characterRunningLeftCollider;
 	SpriteBatchNode* characterRunningLeftspritebatch;
 	
-	Sprite* AKey;
+	Sprite* characterVision;
 
-	void characterMove(int direction, float deltaTime);
+	Sprite* AKey;
+	Sprite* SKey;
+
 	void getHide(bool in);
 	void createAnimation();
 	void jump(Vec2 force, bool right);
