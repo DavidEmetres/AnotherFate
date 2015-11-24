@@ -11,6 +11,7 @@ Character::Character()
 	hide = false;
 	jumping = false;
 	wallTouch = NULL;
+	wallTouchSide = ' ';
 
 	createAnimation();
 

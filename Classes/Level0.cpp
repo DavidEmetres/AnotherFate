@@ -115,6 +115,8 @@ bool Level0::init()
 
 	addChild(Layer3, 3);
 
+	//////////////////////////////////
+
 	Floor = Sprite::create("images/Level0/Colliders/FloorCollider.png");
 	Floor->setPosition(Point((Floor->getContentSize().width / 2), (Floor->getContentSize().height / 2)));
 	Floor->setVisible(false);
@@ -130,8 +132,27 @@ bool Level0::init()
 
 	Floor->setPhysicsBody(FloorCollider);
 
+	//////////////////////////////////
+
+	Wall0 = Sprite::create("images/Level0/Colliders/WallCollider3.png");
+	Wall0->setPosition(Point(-Wall0->getContentSize().width / 2, Wall0->getContentSize().height / 2));
+	Wall0->setVisible(false);
+
+	addChild(Wall0, 3);
+
+	WallCollider0 = PhysicsBody::createBox(Size(Wall0->getContentSize().width, Wall0->getContentSize().height));
+	WallCollider0->setContactTestBitmask(true);
+	WallCollider0->setDynamic(true);
+	WallCollider0->setCollisionBitmask(0);
+	WallCollider0->setGravityEnable(false);
+	WallCollider0->setTag(-2);
+
+	Wall0->setPhysicsBody(WallCollider0);
+
+	//////////////////////////////////
+
 	Wall1 = Sprite::create("images/Level0/Colliders/WallCollider1.png");
-	Wall1->setPosition(Point(Wall1->getContentSize().width/2, (visibleSize.height - Wall1->getContentSize().height/2)));
+	Wall1->setPosition(Point(Wall1->getContentSize().width/2, (visibleSize.height - Wall1->getContentSize().height / 2)));
 	Wall1->setVisible(false);
 
 	addChild(Wall1, 3);
@@ -144,6 +165,8 @@ bool Level0::init()
 	WallCollider1->setTag(-2);
 
 	Wall1->setPhysicsBody(WallCollider1);
+
+	//////////////////////////////////
 
 	Wall2 = Sprite::create("images/Level0/Colliders/WallCollider1.png");
 	Wall2->setPosition(Point(11472, (visibleSize.height - Wall2->getContentSize().height / 2)));
@@ -160,6 +183,8 @@ bool Level0::init()
 
 	Wall2->setPhysicsBody(WallCollider2);
 
+	//////////////////////////////////
+
 	Wall3 = Sprite::create("images/Level0/Colliders/WallCollider3.png");
 	Wall3->setPosition(Point((Layer0->getContentSize().width - Wall3->getContentSize().width/2), Wall3->getContentSize().height/2));
 	Wall3->setVisible(false);
@@ -175,6 +200,8 @@ bool Level0::init()
 
 	Wall3->setPhysicsBody(WallCollider3);
 
+	//////////////////////////////////
+
 	DrinkMachineColliderSprite = Sprite::create("images/Level0/Colliders/MaquinaRefrescosCollider.png");
 	DrinkMachineColliderSprite->setPosition(Point(1310 + DrinkMachineColliderSprite->getContentSize().width/2, 497 - DrinkMachineColliderSprite->getContentSize().height/2));
 	DrinkMachineColliderSprite->setVisible(false);
@@ -189,10 +216,6 @@ bool Level0::init()
 	DrinkMachineCollider->setTag(-1);
 
 	DrinkMachineColliderSprite->setPhysicsBody(DrinkMachineCollider);
-
-	//CREATE VIRTUAL CAMERA
-
-	//changeCameraFollow(Iniko->characterVision);
 
 	//INITIALIZE UPDATE FUNCTION
 
@@ -282,26 +305,78 @@ void Level0::update(float dt)
 
 	else if (moveRight && !moveCam && !Iniko->stealth && !Iniko->hide)
 	{
-		Iniko->facingRight = true;
+		if (Iniko->wallTouch == NULL)
+		{
+			Iniko->facingRight = true;
 
-		Iniko->characterIdleRight->setPosition(Iniko->characterIdleRight->getPosition().x + (800 * dt), Iniko->characterIdleRight->getPosition().y);
+			Iniko->characterIdleRight->setPosition(Iniko->characterIdleRight->getPosition().x + (800 * dt), Iniko->characterIdleRight->getPosition().y);
 
-		Iniko->characterIdlerightspritebatch->setVisible(false);
-		Iniko->characterIdleleftspritebatch->setVisible(false);
-		Iniko->characterRunningLeftspritebatch->setVisible(false);
-		Iniko->characterRunningRightspritebatch->setVisible(true);
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(true);
+		}
+
+		else if (Iniko->wallTouch != NULL && Iniko->wallTouchSide == 'R')
+		{
+			Iniko->facingRight = true;
+
+			Iniko->characterIdleRight->setPosition(Iniko->characterIdleRight->getPosition().x + (800 * dt), Iniko->characterIdleRight->getPosition().y);
+
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(true);
+
+			Iniko->wallTouch = NULL;
+			Iniko->wallTouchSide = ' ';
+		}
+
+		else if (Iniko->wallTouch != NULL && Iniko->wallTouchSide == 'L')
+		{
+			Iniko->characterIdlerightspritebatch->setVisible(true);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+		}
 	}
 
 	else if (moveLeft && !moveCam && !Iniko->stealth && !Iniko->hide)
 	{
-		Iniko->facingRight = false;
+		if (Iniko->wallTouch == NULL)
+		{
+			Iniko->facingRight = false;
 
-		Iniko->characterIdleLeft->setPosition(Iniko->characterIdleLeft->getPosition().x - (800 * dt), Iniko->characterIdleLeft->getPosition().y);
+			Iniko->characterIdleLeft->setPosition(Iniko->characterIdleLeft->getPosition().x - (800 * dt), Iniko->characterIdleLeft->getPosition().y);
 
-		Iniko->characterIdlerightspritebatch->setVisible(false);
-		Iniko->characterIdleleftspritebatch->setVisible(false);
-		Iniko->characterRunningRightspritebatch->setVisible(false);
-		Iniko->characterRunningLeftspritebatch->setVisible(true);
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(true);
+		}
+
+		else if (Iniko->wallTouch != NULL && Iniko->wallTouchSide == 'L')
+		{
+			Iniko->facingRight = false;
+
+			Iniko->characterIdleLeft->setPosition(Iniko->characterIdleLeft->getPosition().x - (800 * dt), Iniko->characterIdleLeft->getPosition().y);
+
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(true);
+
+			Iniko->wallTouch = NULL;
+			Iniko->wallTouchSide = ' ';
+		}
+
+		else if (Iniko->wallTouch != NULL && Iniko->wallTouchSide == 'R')
+		{
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(true);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+		}
 	}
 
 	//STEALTH MOVEMENT
@@ -316,26 +391,78 @@ void Level0::update(float dt)
 
 	else if (moveRight && !moveCam && Iniko->stealth && !Iniko->hide)
 	{
-		Iniko->facingRight = true;
+		if (Iniko->wallTouch == NULL)
+		{
+			Iniko->facingRight = true;
 
-		Iniko->characterIdleRight->setPosition(Iniko->characterIdleRight->getPosition().x + (500 * dt), Iniko->characterIdleRight->getPosition().y);
+			Iniko->characterIdleRight->setPosition(Iniko->characterIdleRight->getPosition().x + (500 * dt), Iniko->characterIdleRight->getPosition().y);
 
-		Iniko->characterIdlerightspritebatch->setVisible(false);
-		Iniko->characterIdleleftspritebatch->setVisible(false);
-		Iniko->characterRunningLeftspritebatch->setVisible(false);
-		Iniko->characterRunningRightspritebatch->setVisible(true);
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(true);
+		}
+
+		else if (Iniko->wallTouch != NULL && Iniko->wallTouchSide == 'R')
+		{
+			Iniko->facingRight = true;
+
+			Iniko->characterIdleRight->setPosition(Iniko->characterIdleRight->getPosition().x + (500 * dt), Iniko->characterIdleRight->getPosition().y);
+
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(true);
+
+			Iniko->wallTouch = NULL;
+			Iniko->wallTouchSide = ' ';
+		}
+
+		else if (Iniko->wallTouch != NULL && Iniko->wallTouchSide == 'L')
+		{
+			Iniko->characterIdlerightspritebatch->setVisible(true);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+		}
 	}
 
 	else if (moveLeft && !moveCam && Iniko->stealth && !Iniko->hide)
 	{
-		Iniko->facingRight = false;
+		if (Iniko->wallTouch == NULL)
+		{
+			Iniko->facingRight = false;
 
-		Iniko->characterIdleLeft->setPosition(Iniko->characterIdleLeft->getPosition().x - (500 * dt), Iniko->characterIdleLeft->getPosition().y);
+			Iniko->characterIdleLeft->setPosition(Iniko->characterIdleLeft->getPosition().x - (500 * dt), Iniko->characterIdleLeft->getPosition().y);
 
-		Iniko->characterIdlerightspritebatch->setVisible(false);
-		Iniko->characterIdleleftspritebatch->setVisible(false);
-		Iniko->characterRunningRightspritebatch->setVisible(false);
-		Iniko->characterRunningLeftspritebatch->setVisible(true);
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(true);
+		}
+
+		else if (Iniko->wallTouch != NULL && Iniko->wallTouchSide == 'L')
+		{
+			Iniko->facingRight = false;
+
+			Iniko->characterIdleLeft->setPosition(Iniko->characterIdleLeft->getPosition().x - (500 * dt), Iniko->characterIdleLeft->getPosition().y);
+
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(true);
+
+			Iniko->wallTouch = NULL;
+			Iniko->wallTouchSide = ' ';
+		}
+
+		else if (Iniko->wallTouch != NULL && Iniko->wallTouchSide == 'R')
+		{
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(true);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+		}
 	}
 
 	//STOPS IF MOVE IN TWO DIRECTIONS
@@ -363,7 +490,7 @@ void Level0::update(float dt)
 		Iniko->SKey->setPosition(Iniko->characterIdleRight->getPosition().x, Iniko->characterIdleRight->getPosition().y + (Iniko->characterIdleRight->getContentSize().height / 2 + 150));
 	}
 
-	else
+	else 
 	{
 		Iniko->runningSoundColliderSprite->setPosition(Iniko->characterIdleLeft->getPosition());
 		Iniko->characterRunningLeft->setPosition(Iniko->characterIdleLeft->getPosition());
@@ -412,7 +539,6 @@ void Level0::update(float dt)
 				if (key == ' ' && AKeyCounter > 0)
 				{
 					objectsVector.at(contactBody->getTag() - 2000)->getThrow(Iniko->facingRight, AKeyCounter);
-					//changeCameraFollow(contactBody->getNode());
 					followObject = contactBody->getNode();
 				}
 				break;
@@ -461,16 +587,14 @@ void Level0::update(float dt)
 
 	if (Iniko->wallTouch != NULL)
 	{
-		if (!Iniko->facingRight && Iniko->characterIdleRight->getPosition().x > Iniko->wallTouch->getPosition().x)
+		if (!Iniko->facingRight && (Iniko->characterIdleLeft->getPosition().x - Iniko->characterIdleLeft->getContentSize().width/2) > (Iniko->wallTouch->getPosition().x + Iniko->wallTouch->getContentSize().width/2))
 		{
-			moveLeft = false;
-			Iniko->characterIdleRight->setPosition(Point(Iniko->wallTouch->getPosition().x + Iniko->wallTouch->getContentSize().width / 2 + Iniko->characterIdleRight->getContentSize().width / 2, Iniko->characterIdleRight->getPosition().y));
+			Iniko->wallTouchSide = 'R';
 		}
 
-		else if (Iniko->facingRight && Iniko->characterIdleRight->getPosition().x < Iniko->wallTouch->getPosition().x)
+		else if (Iniko->facingRight && (Iniko->characterIdleRight->getPosition().x + Iniko->characterIdleLeft->getContentSize().width / 2) < (Iniko->wallTouch->getPosition().x - Iniko->wallTouch->getContentSize().width / 2))
 		{
-			moveRight = false;
-			Iniko->characterIdleRight->setPosition(Point(Iniko->wallTouch->getPosition().x - Iniko->wallTouch->getContentSize().width / 2 - Iniko->characterIdleRight->getContentSize().width / 2, Iniko->characterIdleRight->getPosition().y));
+			Iniko->wallTouchSide = 'L';
 		}
 	}
 
@@ -529,7 +653,7 @@ void Level0::update(float dt)
 	if(!enemy2->die)
 		enemy2->detect->setPositionX(enemy2->enemyArt->getPosition().x);
 
-	//CAM FOLLOW AND ZOOM OUT UPDATE
+	//CAMERA FOLLOW AND ZOOM OUT UPDATE
 
 	if (this->getScale() == 0.5)
 	{
@@ -538,6 +662,7 @@ void Level0::update(float dt)
 
 		this->setPosition(ccpMult(offSetToCenter, this->getScale()));
 		this->setPosition(ccpSub(this->getPosition(), ccpMult(offSetToCenter, (0.5 - this->getScale()) / (0.5 - 1.0f))));
+		this->setPositionY(this->getPositionY() - offSetToCenter.y - (Iniko->characterIdleRight->getPosition().y - (Iniko->characterIdleRight->getContentSize().height / 2 + 80) - 240));
 	}
 
 	else if(this->getScale() == 1 && followObject == NULL)
@@ -630,25 +755,29 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		}
 	}
 
-	if (bodyA->getTag()/100 == 91)										//IF CHARACTER RUNNING SOUND COLLIDES WITH..
+	if (bodyA->getTag() / 100 == 10)									//IF ENEMY COLLIDES WITH..
 	{
-		switch (bodyB->getTag() / 100)
+		if (!enemysVector.at(bodyA->getTag() - 1000)->die)
 		{
-			case 10:													//..AN ENEMY
-				if(!enemysVector.at(bodyB->getTag() - 1000)->die)
-					enemysVector.at(bodyB->getTag() - 1000)->detectCharacter();
-				break;
+			switch (bodyB->getTag() / 100)
+			{
+				case 91:												//..CHARACTER RUNNING SOUND
+					enemysVector.at(bodyA->getTag() - 1000)->detectCharacter();
+					break;
+			}
 		}
 	}
 
-	if (bodyB->getTag()/100 == 91)										//IF CHARACTER RUNNING SOUND COLLIDES WITH..
+	if (bodyB->getTag() / 100 == 10)									//IF ENEMY COLLIDES WITH..
 	{
-		switch (bodyA->getTag() / 100)
+		if (!enemysVector.at(bodyB->getTag() - 1000)->die)
 		{
-			case 10:													//..AN ENEMY
-				if(!enemysVector.at(bodyB->getTag() - 1000)->die)
-					enemysVector.at(bodyA->getTag() - 1000)->detectCharacter();
-				break;
+			switch (bodyA->getTag() / 100)
+			{
+				case 91:												//..CHARACTER RUNNING SOUND
+					enemysVector.at(bodyB->getTag() - 1000)->detectCharacter();
+					break;
+			}
 		}
 	}
 
@@ -686,7 +815,6 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 				if (objectsVector.at(bodyA->getTag() - 2000)->thrown)
 				{
 					removeChild(objectsVector.at(bodyA->getTag() - 2000)->itemArt);
-					//changeCameraFollow(Iniko->characterVision);
 					followObject = NULL;
 				}
 				
@@ -721,7 +849,6 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 				if (objectsVector.at(bodyB->getTag() - 2000)->thrown)
 				{
 					removeChild(objectsVector.at(bodyB->getTag() - 2000)->itemArt);
-					//changeCameraFollow(Iniko->characterVision);
 					followObject = NULL;
 				}
 
@@ -750,16 +877,16 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 
 	if (bodyB->getTag() == -2)											//IF WALL COLLIDES WITH..
 	{
-		if(bodyA->getTag()/100 == 90)									//CHARACTER
-			Iniko->wallTouch = bodyB->getNode();
-
 		switch (bodyA->getTag() / 100)
 		{
+			case 90:													//CHARACTER
+				Iniko->wallTouch = bodyB->getNode();
+				break;
+
 			case 20:													//..AN OBJECT
 				if (objectsVector.at(bodyA->getTag() - 2000)->thrown)
 				{
 					removeChild(objectsVector.at(bodyA->getTag() - 2000)->itemArt);
-					//changeCameraFollow(Iniko->characterVision);
 					followObject = NULL;
 				}
 				
@@ -769,16 +896,16 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 
 	if (bodyA->getTag() == -2)											//IF WALL COLLIDES WITH..
 	{
-		if (bodyB->getTag()/100 == 90)									//CHARACTER
-			Iniko->wallTouch = bodyA->getNode();
-
 		switch (bodyB->getTag() / 100)
 		{
+			case 90:													//CHARACTER
+				Iniko->wallTouch = bodyA->getNode();
+				break;
+
 			case 20:													//..AN OBJECT
 				if (objectsVector.at(bodyB->getTag() - 2000)->thrown)
 				{
 					removeChild(objectsVector.at(bodyB->getTag() - 2000)->itemArt);
-					//changeCameraFollow(Iniko->characterVision);
 					followObject = NULL;
 				}
 				
@@ -874,14 +1001,24 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 
 	if (bodyB->getTag() == -2)											//IF WALL STOPS TO COLLIDES WITH..
 	{
-		if (bodyA->getTag() == 00)										//CHARACTER
-			Iniko->wallTouch = NULL;
+		switch (bodyA->getTag() / 100)
+		{
+			case 90:													//CHARACTER
+				Iniko->wallTouch = NULL;
+				Iniko->wallTouchSide = ' ';
+				break;
+		}
 	}
 
 	if (bodyA->getTag() == -2)											//IF WALL STOPS TO COLLIDES WITH..
 	{
-		if (bodyB->getTag() == 00)										//CHARACTER
-			Iniko->wallTouch = NULL;
+		switch (bodyB->getTag() / 100)
+		{
+			case 90:													//CHARACTER
+				Iniko->wallTouch = NULL;
+				Iniko->wallTouchSide = ' ';
+				break;
+		}
 	}
 
 	if (bodyB->getTag() == -1)											//IF FLOOR STOPS TO COLLIDES WITH..

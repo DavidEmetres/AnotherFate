@@ -26,6 +26,8 @@ public:
 
 	Sprite* Floor;
 	PhysicsBody* FloorCollider;
+	Sprite* Wall0;
+	PhysicsBody* WallCollider0;
 	Sprite* Wall1;
 	PhysicsBody* WallCollider1;
 	Sprite* Wall2;

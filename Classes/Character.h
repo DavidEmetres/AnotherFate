@@ -16,6 +16,7 @@ public:
 	bool hide;
 	bool jumping;
 	Node* wallTouch;
+	char wallTouchSide;
 
 	Sprite* runningSoundColliderSprite;
 	PhysicsBody* runningSoundCollider;
