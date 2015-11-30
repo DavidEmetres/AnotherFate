@@ -9,18 +9,23 @@ class Item : public cocos2d::Layer
 {
 public:
 	Size visibleSize;
-	Size factor;
 
-	Sprite* itemArt;
 	int itemType;
 	int posx;
 	int posy;
+	Vec2 force;
+	bool right;
+
+	Sprite* itemArt;
 	PhysicsBody* itemCollider;
+
+	Sprite* itemSound;
+	PhysicsBody* itemSoundCollider;
 
 	bool thrown;
 
 	void createArt(int type);
-	void getThrow();
+	void getThrow(bool direction, int force);
 
 	Item(int type, int posx, int posy);
 };

@@ -3,10 +3,16 @@
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(1280, 720);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(1366, 768);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(1920, 1080);
+typedef struct tagResource
+{
+	cocos2d::CCSize size;
+	char directory[100];
+}Resource;
+
+static cocos2d::CCSize designResolutionSize = cocos2d::CCSizeMake(1920, 1080);
+static Resource smallResolutionSize = { cocos2d::CCSizeMake(1280, 720), "/Resolutions/HD/" };
+static Resource mediumResolutionSize = { cocos2d::CCSizeMake(1366, 768), "/Resolutions/MedHD/" };
+static Resource largeResolutionSize = { cocos2d::CCSizeMake(1920, 1080), "/Resolutions/FullHD/" };
 
 AppDelegate::AppDelegate() {
 }
@@ -55,25 +61,35 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(0.01/30);
 
     // Set the design resolution
-	designResolutionSize = mediumResolutionSize;
 	Size frameSize = glview->getFrameSize();
-	glview->setFrameSize(designResolutionSize.width, designResolutionSize.height);
+	//glview->setFrameSize(designResolutionSize.width, designResolutionSize.height);
 	glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::EXACT_FIT);
-	
+
+	std::vector<std::string> resDirectory;
+
     // if the frame's height is larger than the height of medium size.
-    if (frameSize.height > mediumResolutionSize.height)
+    if (frameSize.height > mediumResolutionSize.size.height)
     {        
-        director->setContentScaleFactor(MIN(largeResolutionSize.height/designResolutionSize.height, largeResolutionSize.width/designResolutionSize.width));
+		std::string str(largeResolutionSize.directory);
+		resDirectory.push_back(str);
+		cocos2d::FileUtils::getInstance()->setSearchPaths(resDirectory);
+        director->setContentScaleFactor(MIN(largeResolutionSize.size.height/designResolutionSize.height, largeResolutionSize.size.width/designResolutionSize.width));
     }
     // if the frame's height is larger than the height of small size.
-    else if (frameSize.height > smallResolutionSize.height)
-    {        
-        director->setContentScaleFactor(MIN(mediumResolutionSize.height/designResolutionSize.height, mediumResolutionSize.width/designResolutionSize.width));
+    else if (frameSize.height > smallResolutionSize.size.height)
+    {       
+		std::string str(mediumResolutionSize.directory);
+		resDirectory.push_back(str);
+		cocos2d::FileUtils::getInstance()->setSearchPaths(resDirectory);
+        director->setContentScaleFactor(MIN(mediumResolutionSize.size.height/designResolutionSize.height, mediumResolutionSize.size.width/designResolutionSize.width));
     }
     // if the frame's height is smaller than the height of medium size.
     else
     {        
-        director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
+		std::string str(smallResolutionSize.directory);
+		resDirectory.push_back(str);
+		cocos2d::FileUtils::getInstance()->setSearchPaths(resDirectory);
+        director->setContentScaleFactor(MIN(smallResolutionSize.size.height/designResolutionSize.height, smallResolutionSize.size.width/designResolutionSize.width));
     }
 
     register_all_packages();

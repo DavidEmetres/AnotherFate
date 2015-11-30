@@ -2,6 +2,7 @@
 #define __CHARACTER_H__
 
 #include "cocos2d.h"
+#include "PowerUps.h"
 
 USING_NS_CC;
 
@@ -9,10 +10,26 @@ class Character : public cocos2d::Layer
 {
 public:
 	Size visibleSize;
-	Size factor;
+	bool facingRight;
+	Vec2 velocityDir;
+	float velocity;
+	bool stealth;
+	bool hide;
+	bool jumping;
+	Node* wallTouch;
+	char wallTouchSide;
+	bool gameOver;
 
-	Sprite* characterArt;
-	PhysicsBody* characterCollider;
+	Sprite* runningSoundColliderSprite;
+	PhysicsBody* runningSoundCollider;
+
+	Sprite* characterIdleRight;
+	PhysicsBody* characterIdleRightCollider;
+	SpriteBatchNode* characterIdlerightspritebatch;
+
+	Sprite* characterIdleLeft;
+	PhysicsBody* characterIdleLeftCollider;
+	SpriteBatchNode* characterIdleleftspritebatch;
 
 	Sprite* characterRunningRight;
 	PhysicsBody* characterRunningRightCollider;
@@ -21,15 +38,16 @@ public:
 	Sprite* characterRunningLeft;
 	PhysicsBody* characterRunningLeftCollider;
 	SpriteBatchNode* characterRunningLeftspritebatch;
-
-	CCParticleSystemQuad* dague;
-
+	
 	Sprite* characterVision;
-	Sprite* AKey;
 
-	void characterMove(int direction);
-	void moveCam(int direction);
+	Sprite* AKey;
+	Sprite* SKey;
+
+	void getHide(bool in);
 	void createAnimation();
+	void jump(Vec2 force, bool right);
+	void die();
 
 	Character();
 };

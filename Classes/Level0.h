@@ -4,6 +4,8 @@
 #include "cocos2d.h"
 #include "Character.h"
 #include "Item.h"
+#include "Enemy.h"
+#include "PowerUps.h"
 
 USING_NS_CC;
 
@@ -16,24 +18,49 @@ private:
 
 public:
 	Size visibleSize;
-	Size factor;
 
 	Sprite* Layer0;
 	Sprite* Layer1;
 	Sprite* Layer2;
 	Sprite* Layer3;
+	Sprite* Layer4;
+
 	Sprite* Floor;
 	PhysicsBody* FloorCollider;
-	Sprite* Layer4;
+	Sprite* Wall0;
+	PhysicsBody* WallCollider0;
+	Sprite* Wall1;
+	PhysicsBody* WallCollider1;
+	Sprite* Wall2;
+	PhysicsBody* WallCollider2;
+	Sprite* Wall3;
+	PhysicsBody* WallCollider3;
+	Sprite* DrinkMachineColliderSprite;
+	PhysicsBody* DrinkMachineCollider;
 	
 	Sprite* Portal1;
-	
+	CCParticleSystemQuad* portalParticles;
+	CCParticleSystemQuad* portalRayParticles;
+
 	Vector<Item*> objectsVector;
 
 	Item* vasijaPequeña1;
 	Item* vasijaPequeña2;
+	Item* vasijaGrande1;
+	Item* jumpZone1;
 	
 	Character* Iniko;
+
+	Vector<Enemy*> enemysVector;
+	Vector<Enemy*> enemysFollowing;
+
+	Enemy* enemy1;
+	Enemy* enemy2;
+
+	Node* followObject;
+
+	PowerUps* power1;
+	PowerUps* power2;
 
 	Action* cameraFollow;
 	Action* keyAction;
@@ -43,15 +70,19 @@ public:
 	bool moveLeft;
 	bool moveCam;
 	char key;
+	int AKeyCounter;
+	float deltaTime;
+
 	PhysicsBody* contactBody;
-	
+	PhysicsBody* contactFloor;
+	PhysicsBody* contactEnemy;
+
 	void update(float dt);
 	void createBackground();
-	void changeCameraFollow(Node* target);
-	void fixPosition(Node* image, Node* floor);
 	void createAnimations();
 	void keyNull();
-	
+	void objectBehaviour(PhysicsBody* body, int phase);
+
 	void setPhysicsWorld(PhysicsWorld *world);
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event);
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event);
