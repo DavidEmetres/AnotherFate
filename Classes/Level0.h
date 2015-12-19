@@ -6,6 +6,7 @@
 #include "Item.h"
 #include "Enemy.h"
 #include "PowerUps.h"
+#include "Egypt.h"
 
 USING_NS_CC;
 
@@ -38,9 +39,10 @@ public:
 	Sprite* DrinkMachineColliderSprite;
 	PhysicsBody* DrinkMachineCollider;
 	
-	Sprite* Portal1;
 	CCParticleSystemQuad* portalParticles;
 	CCParticleSystemQuad* portalRayParticles;
+
+	Sprite* loadingScreen;
 
 	Vector<Item*> objectsVector;
 
@@ -48,6 +50,7 @@ public:
 	Item* vasijaPequeña2;
 	Item* vasijaGrande1;
 	Item* jumpZone1;
+	Item* portal1;
 	
 	Character* Iniko;
 
@@ -82,6 +85,8 @@ public:
 	void createAnimations();
 	void keyNull();
 	void objectBehaviour(PhysicsBody* body, int phase);
+	void EnterPortal();
+	void goToLevelEgipt(Ref *pSender);
 
 	void setPhysicsWorld(PhysicsWorld *world);
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event);

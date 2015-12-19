@@ -27,6 +27,7 @@ Enemy::Enemy(int posInitial, int posFinal, float waitingTime, int velocity, int 
 	alertedEnemy = false;
 	alertedSound = false;
 	stunned = false;
+	staticEnemy = false;
 
 	returning = false;
 
@@ -55,11 +56,14 @@ Enemy::Enemy(int posInitial, int posFinal, float waitingTime, int velocity, int 
 		this->movementFinished();
 	});
 
-	sequence = Sequence::create(movement, DelayTime::create(waitingTime), callback, NULL);
-	returnsequence = Sequence::create(DelayTime::create(3), CallFunc::create(CC_CALLBACK_0(Enemy::returned, this)), NULL);
-	recoverySequence = Sequence::create(DelayTime::create(5), CallFunc::create(CC_CALLBACK_0(Enemy::returned, this)), NULL);
+	if (!staticEnemy)
+	{
+		sequence = Sequence::create(movement, DelayTime::create(waitingTime), callback, NULL);
+		returnsequence = Sequence::create(DelayTime::create(3), CallFunc::create(CC_CALLBACK_0(Enemy::returned, this)), NULL);
+		recoverySequence = Sequence::create(DelayTime::create(5), CallFunc::create(CC_CALLBACK_0(Enemy::returned, this)), NULL);
 
-	enemyArt->runAction(sequence);
+		enemyArt->runAction(sequence);
+	}
 }
 
 void Enemy::createAnimation(int type)
@@ -86,20 +90,23 @@ void Enemy::createAnimation(int type)
 
 void Enemy::movementFinished()
 {
-	if (facingRight)
+	if (!staticEnemy)
 	{
-		movement = MoveBy::create(velocity, Vec2(-(displacement), 0));
-		sequence = Sequence::create(movement, DelayTime::create(waitingTime), callback, NULL);
-		facingRight = false;
-		enemyArt->runAction(sequence);
-	}
+		if (facingRight)
+		{
+			movement = MoveBy::create(velocity, Vec2(-(displacement), 0));
+			sequence = Sequence::create(movement, DelayTime::create(waitingTime), callback, NULL);
+			facingRight = false;
+			enemyArt->runAction(sequence);
+		}
 
-	else
-	{
-		movement = MoveBy::create(velocity, Vec2(displacement, 0));
-		sequence = Sequence::create(movement, DelayTime::create(waitingTime), callback, NULL);
-		facingRight = true;
-		enemyArt->runAction(sequence);
+		else
+		{
+			movement = MoveBy::create(velocity, Vec2(displacement, 0));
+			sequence = Sequence::create(movement, DelayTime::create(waitingTime), callback, NULL);
+			facingRight = true;
+			enemyArt->runAction(sequence);
+		}
 	}
 }
 

@@ -19,6 +19,12 @@ public:
 	Node* wallTouch;
 	char wallTouchSide;
 	bool gameOver;
+	int initposx;
+	int initposy;
+	int checkpoint;
+	int forceRet;
+	Sprite* forceBarBorder;
+	CCProgressTimer* forceBar;
 
 	Sprite* runningSoundColliderSprite;
 	PhysicsBody* runningSoundCollider;
@@ -38,7 +44,21 @@ public:
 	Sprite* characterRunningLeft;
 	PhysicsBody* characterRunningLeftCollider;
 	SpriteBatchNode* characterRunningLeftspritebatch;
+
+	Sprite* characterStealthRight;
+	PhysicsBody* characterStealthRightCollider;
+	SpriteBatchNode* characterStealthRightspritebatch;
+
+	Sprite* characterStealthLeft;
+	PhysicsBody* characterStealthLeftCollider;
+	SpriteBatchNode* characterStealthLeftspritebatch;
 	
+	Sprite* characterJumpingRight;
+	PhysicsBody* characterJumpingRightCollider;
+
+	Sprite* characterJumpingLeft;
+	PhysicsBody* characterJumpingLeftCollider;
+
 	Sprite* characterVision;
 
 	Sprite* AKey;
@@ -49,7 +69,7 @@ public:
 	void jump(Vec2 force, bool right);
 	void die();
 
-	Character();
+	Character(int level, int checkpoint);
 };
 
 #endif // __CHARACTER_H__

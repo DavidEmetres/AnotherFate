@@ -2,7 +2,7 @@
 
 USING_NS_CC;
 
-Character::Character()
+Character::Character(int level, int checkpoint)
 {
 	visibleSize = Director::getInstance()->getVisibleSize();
 
@@ -13,13 +13,44 @@ Character::Character()
 	wallTouch = NULL;
 	wallTouchSide = ' ';
 	gameOver = false;
+	initposx = 0;
+	initposy = 0;
+	this->checkpoint = checkpoint;
+	velocity = 0;
+	forceRet = 1;
+
+	forceBarBorder = Sprite::create("images/Characters/Iniko/GUI/BarBorder.png");
+	forceBarBorder->setVisible(false);
+
+	forceBar = CCProgressTimer::create(CCSprite::create("images/Characters/Iniko/GUI/ForceBar.png"));
+	forceBar->setType(CCProgressTimerType::BAR);
+	forceBar->setAnchorPoint(ccp(0, 0));
+	forceBar->setBarChangeRate(ccp(1, 0));
+	forceBar->setVisible(false);
 
 	createAnimation();
 
-	characterIdleRight->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
-	characterIdleLeft->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
-	characterRunningRight->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
-	characterRunningLeft->setPosition(Point(900, (characterIdleRight->getContentSize().height / 2 + 80)));
+	//JUMPING ART
+
+	characterJumpingRight = Sprite::create("images/Characters/Iniko/InikoJumping_Right.png");
+	characterJumpingRight->setPosition(Point(initposx, initposy));
+	characterJumpingRightCollider = PhysicsBody::createBox(Size(characterJumpingRight->getContentSize().width, characterJumpingRight->getContentSize().height));
+	characterJumpingRightCollider->setContactTestBitmask(true);
+	characterJumpingRightCollider->setDynamic(true);
+	characterJumpingRightCollider->setCollisionBitmask(0);
+	characterJumpingRightCollider->setTag(9000);
+
+	characterJumpingRight->setPhysicsBody(characterJumpingRightCollider);
+
+	characterJumpingLeft = Sprite::create("images/Characters/Iniko/InikoJumping_Left.png");
+	characterJumpingLeft->setPosition(Point(initposx, initposy));
+	characterJumpingLeftCollider = PhysicsBody::createBox(Size(characterJumpingLeft->getContentSize().width, characterJumpingLeft->getContentSize().height));
+	characterJumpingLeftCollider->setContactTestBitmask(true);
+	characterJumpingLeftCollider->setDynamic(true);
+	characterJumpingLeftCollider->setCollisionBitmask(0);
+	characterJumpingLeftCollider->setTag(9000);
+
+	characterJumpingLeft->setPhysicsBody(characterJumpingLeftCollider);
 
 	//CHARACTER COLLIDERS
 	//TAGS-> 9000:CHARACTER COLLIDER; 9100:RUNNING SOUND COLLIDER; 9002:VISION BORDER COLLIDER; 9003:VISION COLLIDER;
@@ -46,6 +77,45 @@ Character::Character()
 	SKey = Sprite::create("images/Characters/Iniko/GUI/SKey.png");
 	SKey->setPosition(Point(characterIdleRight->getPosition().x, characterIdleRight->getPosition().y + (characterIdleRight->getContentSize().height / 2 + 150)));
 	SKey->setVisible(false);
+
+	//SET POSITION
+
+	switch (level)
+	{
+	case 0:
+
+		switch (checkpoint)
+		{
+		case 0:
+			initposx = 900;
+			initposy = (characterIdleRight->getContentSize().height / 2 + 80);
+			break;
+		}
+
+		break;
+
+	case 1:
+
+		switch (checkpoint)
+		{
+		case 0:
+			initposx = 100;
+			//initposx = 14381;
+			initposy = (characterIdleRight->getContentSize().height / 2 + 90);
+			//initposx = 14381 + 10550;
+			//initposy = characterIdleRight->getContentSize().height / 2;
+			break;
+		}
+
+		break;
+	}
+
+	characterIdleRight->setPosition(Point(initposx, initposy));
+	characterIdleLeft->setPosition(Point(initposx, initposy));
+	characterRunningRight->setPosition(Point(initposx, initposy));
+	characterRunningLeft->setPosition(Point(initposx, initposy));
+	characterJumpingRight->setPosition(Point(initposx, initposy));
+	characterJumpingLeft->setPosition(Point(initposx, initposy));
 }
 
 void Character::getHide(bool in)
@@ -73,6 +143,14 @@ void Character::getHide(bool in)
 	characterRunningRightCollider->setEnable(b);
 	characterRunningLeft->setVisible(b);
 	characterRunningLeftCollider->setEnable(b);
+	characterJumpingRight->setVisible(b);
+	characterJumpingRightCollider->setEnable(b);
+	characterJumpingLeft->setVisible(b);
+	characterJumpingLeftCollider->setEnable(b);
+	//characterStealthRight->setVisible(b);
+	//characterStealthRightCollider->setEnable(b);
+	characterStealthLeft->setVisible(b);
+	characterStealthLeftCollider->setEnable(b);
 }
 
 void Character::jump(Vec2 force, bool right)
@@ -103,6 +181,14 @@ void Character::die()
 	characterRunningRightCollider->setEnable(false);
 	characterRunningLeft->setVisible(false);
 	characterRunningLeftCollider->setEnable(false);
+	characterJumpingLeft->setVisible(false);
+	characterJumpingLeftCollider->setEnable(false);
+	characterJumpingRight->setVisible(false);
+	characterJumpingRightCollider->setEnable(false);
+	//characterStealthRight->setVisible(false);
+	//characterStealthRightCollider->setEnable(false);
+	characterStealthLeft->setVisible(false);
+	characterStealthLeftCollider->setEnable(false);
 	gameOver = true;
 }
 

@@ -22,6 +22,8 @@ bool Level0::init()
 		return false;
 	}
 
+	this->runAction(Sequence::create(DelayTime::create(0.1f), CallFunc::create(CC_CALLBACK_0(Level0::EnterPortal, this)), NULL));
+
 	//INITIALIZE ATRIBUTES
 	
 	visibleSize = Director::getInstance()->getVisibleSize();
@@ -35,6 +37,12 @@ bool Level0::init()
 	contactFloor = NULL;
 	contactEnemy = PhysicsBody::create();
 
+	//LOADING SCREEN
+
+	loadingScreen = Sprite::create("images/Loading.png");
+	addChild(loadingScreen, 5);
+	loadingScreen->setVisible(false);
+
 	//CREATE BACKGROUND LAYERS
 
 	createBackground();
@@ -47,7 +55,7 @@ bool Level0::init()
 
 	int tag;
 
-	vasijaPequeña1 = new Item(2, 1397, 90);
+	/*vasijaPequeña1 = new Item(2, 1397, 90);
 	objectsVector.pushBack(vasijaPequeña1);
 	tag = (vasijaPequeña1->itemType * 1000) + objectsVector.getIndex(vasijaPequeña1);
 	vasijaPequeña1->itemCollider->setTag(tag);
@@ -79,11 +87,17 @@ bool Level0::init()
 	jumpZone1->itemCollider->setTag(tag);
 	jumpZone1->force = Vec2(200, 950);
 	jumpZone1->right = true;
-	addChild(jumpZone1->itemArt, 3);
+	addChild(jumpZone1->itemArt, 3);*/
+
+	portal1 = new Item(5, 2370, 338);
+	objectsVector.pushBack(portal1);
+	tag = (portal1->itemType * 1000) + objectsVector.getIndex(portal1);
+	portal1->itemCollider->setTag(tag);
+	addChild(portal1->itemArt, 3);
 
 	//CREATE CHARACTER
 
-	Iniko = new Character();
+	Iniko = new Character(0, 0);
 
 	addChild(Iniko->runningSoundColliderSprite, 3);
 	addChild(Iniko->characterIdlerightspritebatch, 3);
@@ -94,36 +108,14 @@ bool Level0::init()
 	addChild(Iniko->AKey, 3);
 	addChild(Iniko->SKey, 3);
 
-	//CREATE ENEMYS
-
-	enemy1 = new Enemy(3000, 5000, 2.0f, 5, 1);
-	enemysVector.pushBack(enemy1);
-	tag = 1000 + enemysVector.getIndex(enemy1);
-	enemy1->enemyCollider->setTag(tag);
-	addChild(enemy1->enemyArt, 3);
-	addChild(enemy1->detect, 3);
-	tag += 100;
-	enemy1->enemyVisionCollider->setTag(tag);
-	addChild(enemy1->enemyVision, 3);
-
-	/*enemy2 = new Enemy(5000, 3000, 2.0f, 5, 1);
-	enemysVector.pushBack(enemy2);
-	tag = 1000 + enemysVector.getIndex(enemy2);
-	enemy2->enemyCollider->setTag(tag);
-	addChild(enemy2->enemyArt, 3);
-	addChild(enemy2->detect, 3);
-	tag += 100;
-	enemy2->enemyVisionCollider->setTag(tag);
-	addChild(enemy2->enemyVision, 3);*/
-
-	//CREATE POWER UPS
+	/*//CREATE POWER UPS
 
 	power1 = new PowerUps(1);
 	addChild(power1->flyParticle, 3);
 	addChild(power1->flyParticleSmoke, 3);
 
 	power2 = new PowerUps(2);
-	addChild(power2->shadowParticle, 4);
+	addChild(power2->shadowParticle, 4);*/
 
 
 	//CREATE FLOOR AND WALLS COLLIDERS
@@ -220,7 +212,7 @@ bool Level0::init()
 
 	//////////////////////////////////
 
-	DrinkMachineColliderSprite = Sprite::create("images/Level0/Colliders/MaquinaRefrescosCollider.png");
+	/*DrinkMachineColliderSprite = Sprite::create("images/Level0/Colliders/MaquinaRefrescosCollider.png");
 	DrinkMachineColliderSprite->setPosition(Point(1310 + DrinkMachineColliderSprite->getContentSize().width/2, 497 - DrinkMachineColliderSprite->getContentSize().height/2));
 	DrinkMachineColliderSprite->setVisible(false);
 
@@ -233,7 +225,7 @@ bool Level0::init()
 	DrinkMachineCollider->setGravityEnable(false);
 	DrinkMachineCollider->setTag(-1);
 
-	DrinkMachineColliderSprite->setPhysicsBody(DrinkMachineCollider);
+	DrinkMachineColliderSprite->setPhysicsBody(DrinkMachineCollider);*/
 
 	//INITIALIZE UPDATE FUNCTION
 
@@ -285,7 +277,25 @@ void Level0::update(float dt)
 {
 	deltaTime = dt;
 
-	//POWER UPS UPDATE
+	//ENTER PORTAL
+
+	if (Iniko->characterVision->getPosition().x >= 2270 && Iniko->characterVision->getPosition().x <= 2470)
+	{
+		//Iniko->AKey->setVisible(true);
+
+		if (key == 'U')
+		{
+			loadingScreen->setPosition(Iniko->characterVision->getPosition().x, Iniko->characterVision->getPosition().y + 300);
+			loadingScreen->setVisible(true);
+			moveCam = true;
+			this->runAction(Sequence::create(DelayTime::create(1.0f), CallFunc::create(CC_CALLBACK_0(Level0::EnterPortal, this)), NULL));
+		}
+	}
+
+	else
+		Iniko->AKey->setVisible(false);
+
+	/*//POWER UPS UPDATE
 
 	power1->flyParticleSmoke->setPosition(power1->flyParticle->getPosition());
 
@@ -343,14 +353,14 @@ void Level0::update(float dt)
 		Iniko->characterRunningRightCollider->setEnable(true);
 		Iniko->characterRunningLeft->setOpacity(255);
 		Iniko->characterRunningLeftCollider->setEnable(true);
-	}
+	}*/
 
-	//OBJECT POSITION UPDATE WHEN THROW
+	/*//OBJECT POSITION UPDATE WHEN THROW
 
 	if (followObject != NULL)
 	{
 		objectsVector.at(followObject->getTag() - 2000)->itemSound->setPosition(objectsVector.at(followObject->getTag() - 2000)->itemArt->getPosition());
-	}
+	}*/
 
 	//FACING UPDATE
 
@@ -372,7 +382,7 @@ void Level0::update(float dt)
 
 	//MOVEMENT UPDATE
 
-	//ENEMY MOVEMENT
+	/*//ENEMY MOVEMENT
 
 	for (int i = 0; i < enemysVector.size(); i++)
 	{
@@ -399,7 +409,7 @@ void Level0::update(float dt)
 				enemysVector.at(i)->detectCharacter(dt);
 			}
 		}
-	}
+	}*/
 
 	//GENERAL MOVEMENT
 
@@ -411,7 +421,26 @@ void Level0::update(float dt)
 		Iniko->characterRunningLeftspritebatch->setVisible(false);
 	}
 
-	else if (moveRight && !moveCam && !Iniko->stealth && !Iniko->hide)
+	else if (moveCam)
+	{
+		if (Iniko->facingRight)
+		{
+			Iniko->characterIdlerightspritebatch->setVisible(true);
+			Iniko->characterIdleleftspritebatch->setVisible(false);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+		}
+
+		else
+		{
+			Iniko->characterIdlerightspritebatch->setVisible(false);
+			Iniko->characterIdleleftspritebatch->setVisible(true);
+			Iniko->characterRunningRightspritebatch->setVisible(false);
+			Iniko->characterRunningLeftspritebatch->setVisible(false);
+		}
+	}
+
+	else if (moveRight && !moveCam && !Iniko->stealth && !Iniko->hide && !Iniko->jumping)
 	{
 		if (Iniko->wallTouch == NULL)
 		{
@@ -612,10 +641,10 @@ void Level0::update(float dt)
 
 	//COLLISION UPDATE
 
-	switch (contactEnemy->getTag() / 100)
+	/*switch (contactEnemy->getTag() / 100)
 	{
 		case 10:														//ENEMY
-			if (enemysVector.at(contactEnemy->getTag() - 1000)->alertedEnemy)
+			if (enemysVector.at(contactEnemy->getTag() - 1000)->alertedEnemy && !power2->activated && !enemysVector.at(contactEnemy->getTag() - 1000)->stunned)
 			{
 				Iniko->die();
 				moveRight = false;
@@ -623,7 +652,7 @@ void Level0::update(float dt)
 				this->setScale(1);
 			}
 
-			else if (enemysVector.at(contactEnemy->getTag() - 1000)->facingRight && Iniko->facingRight && !enemysVector.at(contactEnemy->getTag() - 1000)->alertedEnemy)
+			else if (enemysVector.at(contactEnemy->getTag() - 1000)->facingRight && Iniko->facingRight && !enemysVector.at(contactEnemy->getTag() - 1000)->alertedEnemy && Iniko->stealth)
 			{
 				if (key == 'Q' && !Iniko->hide)
 				{
@@ -634,7 +663,7 @@ void Level0::update(float dt)
 				}
 			}
 
-			else if (!enemysVector.at(contactEnemy->getTag() - 1000)->facingRight && !Iniko->facingRight && !enemysVector.at(contactEnemy->getTag() - 1000)->alertedEnemy)
+			else if (!enemysVector.at(contactEnemy->getTag() - 1000)->facingRight && !Iniko->facingRight && !enemysVector.at(contactEnemy->getTag() - 1000)->alertedEnemy && Iniko->stealth)
 			{
 				if (key == 'Q' && !Iniko->hide)
 				{
@@ -644,12 +673,21 @@ void Level0::update(float dt)
 					enemysVector.at(contactEnemy->getTag() - 1000)->detect->setVisible(false);
 				}
 			}
+
+			else if(!enemysVector.at(contactEnemy->getTag() - 1000)->stunned && !Iniko->stealth)
+			{
+				Iniko->die();
+				moveRight = false;
+				moveLeft = false;
+				this->setScale(1);
+			}
+
 			break;
-	}
+	}*/
 
 	switch (contactBody->getTag() / 100)
-	{
-		case 20:														//THROWABLE OBJECT
+	{			
+		/*case 20:																//THROWABLE OBJECT
 			if (key == ' ' && AKeyCounter > 0)
 			{
 				objectsVector.at(contactBody->getTag() - 2000)->getThrow(Iniko->facingRight, AKeyCounter);
@@ -657,7 +695,7 @@ void Level0::update(float dt)
 			}
 			break;
 
-		case 30:														//OBJECTO TO HIDE
+		case 30:																//OBJECTO TO HIDE
 			if (key == 'U')
 			{
 				if (!Iniko->hide)
@@ -665,15 +703,17 @@ void Level0::update(float dt)
 			}
 			break;
 
-		case 40:														//JUMP ZONE
+		case 40:																//JUMP ZONE
 			if (objectsVector.at(contactBody->getTag() - 4000)->right && Iniko->facingRight)
 			{
 				Iniko->SKey->setVisible(true);
 
 				if (key == 'S')
 				{
-					moveRight = false;
-					moveLeft = false;
+					//moveRight = false;
+					//moveLeft = false;
+					moveCam = true;
+
 					Iniko->jumping = true;
 					Iniko->characterIdleRight->setPosition(Point(Iniko->characterIdleRight->getPosition().x, Iniko->characterIdleRight->getPosition().y + 5));
 					Iniko->characterIdleRightCollider->setVelocity(objectsVector.at(contactBody->getTag() - 4000)->force);
@@ -686,8 +726,10 @@ void Level0::update(float dt)
 
 				if (key == 'S')
 				{
-					moveRight = false;
-					moveLeft = false;
+					//moveRight = false;
+					//moveLeft = false;
+					moveCam = true;
+
 					Iniko->jumping = true;
 					Iniko->characterIdleLeft->setPosition(Point(Iniko->characterIdleLeft->getPosition().x, Iniko->characterIdleLeft->getPosition().y + 5));
 					Iniko->characterIdleLeftCollider->setVelocity(objectsVector.at(contactBody->getTag() - 4000)->force);
@@ -697,7 +739,17 @@ void Level0::update(float dt)
 			else
 				Iniko->SKey->setVisible(false);
 
-			break;
+			break;*/
+
+		/*case 50:
+			if (key == 'U')
+			{
+				loadingScreen->setPosition(Iniko->characterVision->getPosition().x, Iniko->characterVision->getPosition().y + 500);
+				loadingScreen->setVisible(true);
+				this->runAction(Sequence::create(DelayTime::create(1.0f), CallFunc::create(CC_CALLBACK_0(Level0::EnterPortal, this)), NULL));
+			}
+			break;*/
+
 	}
 
 	//WALL COLLISION
@@ -733,17 +785,18 @@ void Level0::update(float dt)
 			Iniko->characterIdleleftspritebatch->setVisible(true);
 		}
 
-		moveRight = false;
-		moveLeft = false;
+		//moveRight = false;
+		//moveLeft = false;
+		moveCam = true;
 		Iniko->characterRunningLeftspritebatch->setVisible(false);
 		Iniko->characterRunningRightspritebatch->setVisible(false);
 	}
 
 	//KEY PRESSED HANDLER
 
-	if (this->getScale() == 1)
-	{
-		if (key == 'A' && (contactBody->getTag() / 100) == 20)
+	//if (this->getScale() == 1)
+	//{
+		/*if (key == 'A' && (contactBody->getTag() / 100) == 20)
 		{
 			AKeyCounter += 500 * dt;
 		}
@@ -755,9 +808,9 @@ void Level0::update(float dt)
 		{
 			if (key == 'D')
 				Iniko->getHide(false);
-		}
+		}*/
 
-		if (key == '1' && !power1->finish && !power1->activated)
+		/*if (key == '1' && !power1->finish && !power1->activated)
 		{
 			if (Iniko->facingRight)
 				power1->rightDirection = true;
@@ -775,29 +828,29 @@ void Level0::update(float dt)
 		if (key == '2' && !power2->finish && !power2->activated)
 		{
 			power2->activated = true;
-			power2->shadowParticle->setVisible(true);
+			//power2->shadowParticle->setVisible(true);
 
-			Iniko->runningSoundCollider->setEnable(false);
+			//Iniko->runningSoundCollider->setEnable(false);
 			Iniko->characterIdleRight->setOpacity(128);
-			Iniko->characterIdleRightCollider->setEnable(false);
+			//Iniko->characterIdleRightCollider->setEnable(false);
 			Iniko->characterIdleLeft->setOpacity(128);
-			Iniko->characterIdleLeftCollider->setEnable(false);
+			//Iniko->characterIdleLeftCollider->setEnable(false);
 			Iniko->characterRunningRight->setOpacity(128);
-			Iniko->characterRunningRightCollider->setEnable(false);
+			//Iniko->characterRunningRightCollider->setEnable(false);
 			Iniko->characterRunningLeft->setOpacity(128);
-			Iniko->characterRunningLeftCollider->setEnable(false);
+			//Iniko->characterRunningLeftCollider->setEnable(false);
 
 			power2->ended(5);
-		}
-	}
+		}*/
+	//}
 
 	//CHECK RUNNING SOUND
 
-	if (Iniko->stealth || (!moveRight && !moveLeft) || Iniko->hide || (power2->activated && !power2->finish))
+	/*if (Iniko->stealth || (!moveRight && !moveLeft) || Iniko->hide || power2->activated)
 		Iniko->runningSoundCollider->setEnable(false);
 
 	else
-		Iniko->runningSoundCollider->setEnable(true);
+		Iniko->runningSoundCollider->setEnable(true);*/
 
 	//CAMERA FOLLOW AND ZOOM OUT UPDATE
 
@@ -859,7 +912,7 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 				break;
 		
 			case 10:													//..AN ENEMY
-				if(!enemysVector.at(bodyB->getTag() - 1000)->die && !power2->activated)
+				if(!enemysVector.at(bodyB->getTag() - 1000)->die)
 					contactEnemy = bodyB;
 				break;
 
@@ -870,6 +923,11 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 
 			case 40:													//..A JUMP ZONE
 				contactBody = bodyB;
+				break;
+
+			case 50:													//..A PORTAL
+				contactBody = bodyB;
+				Iniko->AKey->setVisible(true);
 				break;
 		}
 	}
@@ -883,7 +941,7 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 				break;
 		
 			case 10:													//..AN ENEMY
-				if (!enemysVector.at(bodyA->getTag() - 1000)->die && !power2->activated)
+				if (!enemysVector.at(bodyA->getTag() - 1000)->die)
 					contactEnemy = bodyA;
 				break;
 
@@ -895,6 +953,11 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 			case 40:													//..A JUMP ZONE
 				contactBody = bodyA;
 				break;
+
+			case 50:													//..A PORTAL
+				contactBody = bodyA;
+				Iniko->AKey->setVisible(true);
+				break;
 		}
 	}
 
@@ -905,8 +968,11 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 			switch (bodyB->getTag() / 100)
 			{
 				case 91:												//..CHARACTER RUNNING SOUND
-					enemysVector.at(bodyA->getTag() - 1000)->alertedSound = true;
-					enemysVector.at(bodyA->getTag() - 1000)->followPos = Iniko->characterIdleRight->getPosition().x;
+					if (!Iniko->stealth && !power2->activated)
+					{
+						enemysVector.at(bodyA->getTag() - 1000)->alertedSound = true;
+						enemysVector.at(bodyA->getTag() - 1000)->followPos = Iniko->characterIdleRight->getPosition().x;
+					}
 					break;
 
 				case 21:												//..ITEM SOUND
@@ -934,8 +1000,11 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 			switch (bodyA->getTag() / 100)
 			{
 				case 91:												//..CHARACTER RUNNING SOUND
-					enemysVector.at(bodyB->getTag() - 1000)->alertedSound = true;
-					enemysVector.at(bodyB->getTag() - 1000)->followPos = Iniko->characterIdleRight->getPosition().x;
+					if (!Iniko->stealth && !power2->activated)
+					{
+						enemysVector.at(bodyB->getTag() - 1000)->alertedSound = true;
+						enemysVector.at(bodyB->getTag() - 1000)->followPos = Iniko->characterIdleRight->getPosition().x;
+					}
 					break;
 
 				case 21:												//..ITEM SOUND
@@ -1009,6 +1078,11 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		{
 			if (!Iniko->jumping)
 			{
+				if ((Iniko->characterIdleRightCollider->getVelocity().y < 0) && (Iniko->characterIdleLeftCollider->getVelocity().y < 0))
+				{
+					moveCam = false;
+				}
+
 				bodyA->setVelocity(Vec2::ZERO);
 				bodyA->setGravityEnable(false);
 
@@ -1042,6 +1116,11 @@ bool Level0::onContactBegin(PhysicsContact &contact)
 		{
 			if (!Iniko->jumping)
 			{
+				if ((Iniko->characterIdleRightCollider->getVelocity().y < 0) && (Iniko->characterIdleLeftCollider->getVelocity().y < 0))
+				{
+					moveCam = false;
+				}
+
 				bodyB->setVelocity(Vec2::ZERO);
 				bodyB->setGravityEnable(false);
 
@@ -1125,6 +1204,12 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 				contactBody = PhysicsBody::create();
 				contactBody->setTag(9999);
 				break;
+
+			case 50:													//..A PORTAL
+				Iniko->AKey->setVisible(false);
+				contactBody = PhysicsBody::create();
+				contactBody->setTag(9999);
+				break;
 		}
 	}
 
@@ -1149,6 +1234,12 @@ bool Level0::onContactSeparate(PhysicsContact &contact)
 				break;
 
 			case 20:													//..A THROWABLE OBJECT
+				Iniko->AKey->setVisible(false);
+				contactBody = PhysicsBody::create();
+				contactBody->setTag(9999);
+				break;
+
+			case 50:													//..A PORTAL
 				Iniko->AKey->setVisible(false);
 				contactBody = PhysicsBody::create();
 				contactBody->setTag(9999);
@@ -1241,22 +1332,25 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 {
 	_pressedKey = keyCode;
 	
+	switch (keyCode)
+	{
+		case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+			if (!Iniko->gameOver)
+				moveRight = true;
+			break;
+
+		case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+			if (!Iniko->gameOver)
+				moveLeft = true;
+			break;
+	}
+
 	if (!Iniko->gameOver && this->getScale() == 1)
 	{
 		switch (_pressedKey)
 		{
-			case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
-				if (!Iniko->jumping && (Iniko->characterIdleRightCollider->getVelocity().y >= 0) && (Iniko->characterIdleLeftCollider->getVelocity().y >= 0))
-					moveRight = true;
-				break;
-
-			case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
-				if (!Iniko->jumping && (Iniko->characterIdleRightCollider->getVelocity().y >= 0) && (Iniko->characterIdleLeftCollider->getVelocity().y >= 0))
-					moveLeft = true;
-				break;
-
 			case EventKeyboard::KeyCode::KEY_SPACE:
-				if (followObject == NULL)
+				if (followObject == NULL && !Iniko->jumping && (Iniko->characterIdleRightCollider->getVelocity().y >= 0) && (Iniko->characterIdleLeftCollider->getVelocity().y >= 0))
 				{
 					this->setScale(0.5);
 					moveCam = true;
@@ -1306,7 +1400,7 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 				break;
 
 			case EventKeyboard::KeyCode::KEY_1:
-				if (!Iniko->jumping && (Iniko->characterIdleRightCollider->getVelocity().y >= 0) && (Iniko->characterIdleLeftCollider->getVelocity().y >= 0))
+				if (!Iniko->jumping && (Iniko->characterIdleRightCollider->getVelocity().y >= 0) && (Iniko->characterIdleLeftCollider->getVelocity().y >= 0) && !Iniko->hide)
 				{
 					key = '1';
 					this->runAction(Sequence::create(DelayTime::create(0.001f), CallFunc::create(CC_CALLBACK_0(Level0::keyNull, this)), NULL));
@@ -1314,7 +1408,7 @@ void Level0::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *event)
 				break;
 
 			case EventKeyboard::KeyCode::KEY_2:
-				if (!Iniko->jumping && (Iniko->characterIdleRightCollider->getVelocity().y >= 0) && (Iniko->characterIdleLeftCollider->getVelocity().y >= 0))
+				if (!Iniko->jumping && (Iniko->characterIdleRightCollider->getVelocity().y >= 0) && (Iniko->characterIdleLeftCollider->getVelocity().y >= 0) && !Iniko->hide)
 				{
 					key = '2';
 					this->runAction(Sequence::create(DelayTime::create(0.001f), CallFunc::create(CC_CALLBACK_0(Level0::keyNull, this)), NULL));
@@ -1352,14 +1446,6 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 			Iniko->stealth = false;
 			break;
 
-		case EventKeyboard::KeyCode::KEY_A:
-			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
-			key = ' ';
-			AKeyCounter += 600;
-			if (AKeyCounter > 1100)
-				AKeyCounter = 1100;
-			break;
-
 		case EventKeyboard::KeyCode::KEY_S:
 			_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
 			key = ' ';
@@ -1390,6 +1476,20 @@ void Level0::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *event)
 			key = ' ';
 			break;
 	}
+
+	if (this->getScale() == 1)
+	{
+		switch (keyCode)
+		{
+			case EventKeyboard::KeyCode::KEY_A:
+				_pressedKey = EventKeyboard::KeyCode::KEY_NONE;
+				key = ' ';
+				AKeyCounter += 600;
+				if (AKeyCounter > 1100)
+					AKeyCounter = 1100;
+				break;
+		}
+	}
 }
 
 void Level0::createAnimations()
@@ -1401,6 +1501,8 @@ void Level0::createAnimations()
 	portalParticles->setPosition(Point(2370, 338));
 	portalParticles->setPositionType(kCCPositionTypeRelative);
 	addChild(portalParticles, 1);
+
+	/////////////////////////////////////////////
 
 	portalRayParticles = CCParticleSystemQuad::create("Particles/PortalRayParticles/portalray_particle.plist");
 	portalRayParticles->setScale(0.4);
@@ -1430,4 +1532,15 @@ void Level0::objectBehaviour(PhysicsBody* body, int phase)
 		//removeChild(objectsVector.at(body->getTag() - 2000)->itemArt);
 		followObject = NULL;
 	}
+}
+
+void Level0::EnterPortal()
+{
+	goToLevelEgipt(this);
+}
+
+void Level0::goToLevelEgipt(Ref *pSender)
+{
+	auto scene = Egypt::createScene();
+	Director::getInstance()->replaceScene(scene);
 }

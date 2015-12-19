@@ -16,7 +16,11 @@ Item::Item(int type, int posx, int posy)
 
 	createArt(itemType);
 
-	itemCollider = PhysicsBody::createBox(Size((itemArt->getContentSize().width), (itemArt->getContentSize().height)));
+	if(type == 3)
+		itemCollider = PhysicsBody::createBox(Size(0, (itemArt->getContentSize().height)));
+	else
+		itemCollider = PhysicsBody::createBox(Size((itemArt->getContentSize().width), (itemArt->getContentSize().height)));
+
 	itemCollider->setContactTestBitmask(true);
 	itemCollider->setDynamic(true);
 	itemCollider->setCollisionBitmask(0);
@@ -54,6 +58,11 @@ void Item::createArt(int type)
 			itemArt = Sprite::create();
 			itemArt->setPosition(Point(posx, posy));
 			break;
+
+		case 5:																				//PORTAL
+			itemArt = Sprite::create();
+			itemArt->setPosition(Point(posx, posy));
+			break;
 	}
 }
 
@@ -63,12 +72,14 @@ void Item::getThrow(bool direction, int force)
 
 	if (direction)
 	{
+		itemCollider->setGravityEnable(true);
 		itemCollider->setVelocity(Vec2(force, force));
 		itemArt->runAction(RotateBy::create(4.0f, 720));
 	}
 
 	else
 	{
+		itemCollider->setGravityEnable(true);
 		itemCollider->setVelocity(Vec2(-force, force));
 		itemArt->runAction(RotateBy::create(4.0f, -720));
 	}

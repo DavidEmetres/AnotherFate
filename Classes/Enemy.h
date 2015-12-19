@@ -21,6 +21,7 @@ public:
 	bool alertedSound;
 	bool returning;
 	bool stunned;
+	bool staticEnemy;
 
 	Sprite* enemyArt;
 	PhysicsBody* enemyCollider;
