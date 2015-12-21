@@ -6,7 +6,7 @@
 #include "Item.h"
 #include "Enemy.h"
 #include "PowerUps.h"
-#include "Egypt.h"
+#include "Egipt.h"
 
 USING_NS_CC;
 

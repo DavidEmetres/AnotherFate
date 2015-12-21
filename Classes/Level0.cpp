@@ -1541,6 +1541,6 @@ void Level0::EnterPortal()
 
 void Level0::goToLevelEgipt(Ref *pSender)
 {
-	auto scene = Egypt::createScene();
+	auto scene = Egipt::createScene();
 	Director::getInstance()->replaceScene(scene);
 }

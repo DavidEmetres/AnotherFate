@@ -86,10 +86,10 @@ Character::Character(int level, int checkpoint)
 
 		switch (checkpoint)
 		{
-		case 0:
-			initposx = 900;
-			initposy = (characterIdleRight->getContentSize().height / 2 + 80);
-			break;
+			case 0:
+				initposx = 900;
+				initposy = (characterIdleRight->getContentSize().height / 2 + 80);
+				break;
 		}
 
 		break;
@@ -98,13 +98,13 @@ Character::Character(int level, int checkpoint)
 
 		switch (checkpoint)
 		{
-		case 0:
-			initposx = 100;
-			//initposx = 14381;
-			initposy = (characterIdleRight->getContentSize().height / 2 + 90);
-			//initposx = 14381 + 10550;
-			//initposy = characterIdleRight->getContentSize().height / 2;
-			break;
+			case 0:
+				initposx = 100;
+				//initposx = 14381;
+				initposy = 160 + 150;
+				//initposx = 14381 + 10550;
+				//initposy = characterIdleRight->getContentSize().height / 2;
+				break;
 		}
 
 		break;
@@ -116,6 +116,8 @@ Character::Character(int level, int checkpoint)
 	characterRunningLeft->setPosition(Point(initposx, initposy));
 	characterJumpingRight->setPosition(Point(initposx, initposy));
 	characterJumpingLeft->setPosition(Point(initposx, initposy));
+	characterStealthRight->setPosition(Point(initposx, initposy));
+	characterStealthLeft->setPosition(Point(initposx, initposy));
 }
 
 void Character::getHide(bool in)
@@ -147,8 +149,8 @@ void Character::getHide(bool in)
 	characterJumpingRightCollider->setEnable(b);
 	characterJumpingLeft->setVisible(b);
 	characterJumpingLeftCollider->setEnable(b);
-	//characterStealthRight->setVisible(b);
-	//characterStealthRightCollider->setEnable(b);
+	characterStealthRight->setVisible(b);
+	characterStealthRightCollider->setEnable(b);
 	characterStealthLeft->setVisible(b);
 	characterStealthLeftCollider->setEnable(b);
 }
@@ -185,8 +187,8 @@ void Character::die()
 	characterJumpingLeftCollider->setEnable(false);
 	characterJumpingRight->setVisible(false);
 	characterJumpingRightCollider->setEnable(false);
-	//characterStealthRight->setVisible(false);
-	//characterStealthRightCollider->setEnable(false);
+	characterStealthRight->setVisible(false);
+	characterStealthRightCollider->setEnable(false);
 	characterStealthLeft->setVisible(false);
 	characterStealthLeftCollider->setEnable(false);
 	gameOver = true;
@@ -248,7 +250,7 @@ void Character::createAnimation()
 
 	characterIdleLeft = Sprite::createWithSpriteFrameName("InikoIdle_Left1.png");
 	characterIdleleftspritebatch->addChild(characterIdleLeft);
-	characterIdleleftspritebatch->setVisible(false);
+	//characterIdleleftspritebatch->setVisible(false);
 
 	Vector<SpriteFrame*> characterIdleLeftanimFrames(12);
 
@@ -280,7 +282,7 @@ void Character::createAnimation()
 
 	characterRunningRight = Sprite::createWithSpriteFrameName("InikoRunning_Right1.png");
 	characterRunningRightspritebatch->addChild(characterRunningRight);
-	characterRunningRightspritebatch->setVisible(false);
+	//characterRunningRightspritebatch->setVisible(false);
 
 	Vector<SpriteFrame*> characterRunningRightanimFrames(34);
 
@@ -312,7 +314,7 @@ void Character::createAnimation()
 
 	characterRunningLeft = Sprite::createWithSpriteFrameName("InikoRunning_Left1.png");
 	characterRunningLeftspritebatch->addChild(characterRunningLeft);
-	characterRunningLeftspritebatch->setVisible(false);
+	//characterRunningLeftspritebatch->setVisible(false);
 
 	Vector<SpriteFrame*> characterRunningLeftanimFrames(34);
 
@@ -333,4 +335,68 @@ void Character::createAnimation()
 	characterRunningLeftCollider->setTag(9000);
 
 	characterRunningLeft->setPhysicsBody(characterRunningLeftCollider);
+
+	//INIKO STEALTH RIGHT
+
+	sprintf(str, "SpriteSheets/Characters/Iniko/InikoStealth_Right/iniko_sigilo_vasija%d.png", res);
+	characterStealthRightspritebatch = SpriteBatchNode::create(str);
+	SpriteFrameCache* characterStealthRightcache = SpriteFrameCache::getInstance();
+	sprintf(str, "SpriteSheets/Characters/Iniko/InikoStealth_Right/iniko_sigilo_vasija%d.plist", res);
+	characterStealthRightcache->addSpriteFramesWithFile(str);
+
+	characterStealthRight = Sprite::createWithSpriteFrameName("InikoSigilo_00001.png");
+	characterStealthRightspritebatch->addChild(characterStealthRight);
+	//characterStealthRightspritebatch->setVisible(false);
+
+	Vector<SpriteFrame*> characterStealthRightanimFrames(48);
+
+	for (int i = 1; i <= 48; i++)
+	{
+		sprintf(str, "InikoSigilo_%05d.png", i);
+		SpriteFrame* frame = characterStealthRightcache->getSpriteFrameByName(str);
+		characterStealthRightanimFrames.pushBack(frame);
+	}
+
+	Animation* characterStealthRightanimation = Animation::createWithSpriteFrames(characterStealthRightanimFrames, 0.025f);
+	characterStealthRight->runAction(RepeatForever::create(Animate::create(characterStealthRightanimation)));
+
+	characterStealthRightCollider = PhysicsBody::createBox(Size((characterStealthRight->getContentSize().width), 265));
+	characterStealthRightCollider->setContactTestBitmask(true);
+	characterStealthRightCollider->setDynamic(true);
+	characterStealthRightCollider->setCollisionBitmask(0);
+	characterStealthRightCollider->setTag(9000);
+
+	characterStealthRight->setPhysicsBody(characterStealthRightCollider);
+
+	//INIKO STEALTH LEFT
+
+	sprintf(str, "SpriteSheets/Characters/Iniko/InikoStealth_Left/iniko_sigilo_left%d.png", res);
+	characterStealthLeftspritebatch = SpriteBatchNode::create(str);
+	SpriteFrameCache* characterStealthLeftcache = SpriteFrameCache::getInstance();
+	sprintf(str, "SpriteSheets/Characters/Iniko/InikoStealth_Left/iniko_sigilo_left%d.plist", res);
+	characterStealthLeftcache->addSpriteFramesWithFile(str);
+
+	characterStealthLeft = Sprite::createWithSpriteFrameName("InikoSigiloIzquierda_00001.png");
+	characterStealthLeftspritebatch->addChild(characterStealthLeft);
+	//characterStealthLeftspritebatch->setVisible(false);
+
+	Vector<SpriteFrame*> characterStealthLeftanimFrames(48);
+
+	for (int i = 1; i <= 48; i++)
+	{
+		sprintf(str, "InikoSigiloIzquierda_%05d.png", i);
+		SpriteFrame* frame = characterStealthLeftcache->getSpriteFrameByName(str);
+		characterStealthLeftanimFrames.pushBack(frame);
+	}
+
+	Animation* characterStealthLeftanimation = Animation::createWithSpriteFrames(characterStealthLeftanimFrames, 0.025f);
+	characterStealthLeft->runAction(RepeatForever::create(Animate::create(characterStealthLeftanimation)));
+
+	characterStealthLeftCollider = PhysicsBody::createBox(Size((characterStealthLeft->getContentSize().width), 265));
+	characterStealthLeftCollider->setContactTestBitmask(true);
+	characterStealthLeftCollider->setDynamic(true);
+	characterStealthLeftCollider->setCollisionBitmask(0);
+	characterStealthLeftCollider->setTag(9000);
+
+	characterStealthLeft->setPhysicsBody(characterStealthLeftCollider);
 }

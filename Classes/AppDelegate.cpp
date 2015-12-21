@@ -1,7 +1,7 @@
 #include "AppDelegate.h"
 #include "Level0.h"
 #include "GameOver.h"
-#include "Egypt.h"
+#include "Egipt.h"
 
 USING_NS_CC;
 
@@ -97,7 +97,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-	auto scene = Egypt::createScene();
+	auto scene = Egipt::createScene();
 
     // run
     director->runWithScene(scene);
