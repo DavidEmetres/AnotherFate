@@ -22,7 +22,7 @@ bool Level0::init()
 		return false;
 	}
 
-	this->runAction(Sequence::create(DelayTime::create(0.1f), CallFunc::create(CC_CALLBACK_0(Level0::EnterPortal, this)), NULL));
+	//this->runAction(Sequence::create(DelayTime::create(0.1f), CallFunc::create(CC_CALLBACK_0(Level0::EnterPortal, this)), NULL));
 
 	//INITIALIZE ATRIBUTES
 	

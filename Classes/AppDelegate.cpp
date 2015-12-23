@@ -50,6 +50,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         //glview = GLViewImpl::createWithRect("AnotherFate", Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
 		//glview = cocos2d::GLViewImpl::create("AnotherFate");
 		glview = cocos2d::GLViewImpl::createWithFullScreen("AnotherFate");
+		//glview = cocos2d::GLViewImpl::createWithRect("AnotherFate", Rect(0, 0, 1920, 1080));
 #else
         glview = cocos2d::GLViewImpl::create("AnotherFate");
 #endif

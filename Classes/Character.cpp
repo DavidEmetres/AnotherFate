@@ -99,7 +99,7 @@ Character::Character(int level, int checkpoint)
 		switch (checkpoint)
 		{
 			case 0:
-				initposx = 100;
+				initposx = 200;
 				//initposx = 14381;
 				initposy = 160 + 150;
 				//initposx = 14381 + 10550;

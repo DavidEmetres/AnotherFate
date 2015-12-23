@@ -1018,7 +1018,7 @@ void Egipt::update(float dt)
 	}
 	}*/
 
-	if (Iniko->characterIdleRight->getPositionX() >= 500 && !ready)
+	if (Iniko->characterIdleRight->getPositionX() >= 100 && !ready)
 	{
 		ready = true;
 
@@ -1092,7 +1092,7 @@ void Egipt::update(float dt)
 		enemy3->enemy2IdleRight->setPosition(enemy3->enemyArt->getPosition().x, enemy3->enemyArt->getPosition().y + 20);
 		enemy3->enemy2IdleLeft->setPosition(enemy3->enemyArt->getPosition().x, enemy3->enemyArt->getPosition().y + 20);
 
-		enemy4 = new Enemy(35469, 36995, 2.0f, 20, 2);
+		/*enemy4 = new Enemy(35469, 36995, 2.0f, 20, 2);
 		enemysVector.pushBack(enemy4);
 		tag = 1000 + enemysVector.getIndex(enemy4);
 		enemy4->enemyCollider->setTag(tag);
@@ -1112,9 +1112,9 @@ void Egipt::update(float dt)
 		enemy4->enemy2RunningRight->setPosition(enemy4->enemyArt->getPosition().x, enemy4->enemyArt->getPosition().y + 20);
 		enemy4->enemy2RunningLeft->setPosition(enemy4->enemyArt->getPosition().x, enemy4->enemyArt->getPosition().y + 20);
 		enemy4->enemy2IdleRight->setPosition(enemy4->enemyArt->getPosition().x, enemy4->enemyArt->getPosition().y + 20);
-		enemy4->enemy2IdleLeft->setPosition(enemy4->enemyArt->getPosition().x, enemy4->enemyArt->getPosition().y + 20);
+		enemy4->enemy2IdleLeft->setPosition(enemy4->enemyArt->getPosition().x, enemy4->enemyArt->getPosition().y + 20);*/
 
-		enemy5 = new Enemy(37258, 38888, 2.0f, 20, 2);
+		/*enemy5 = new Enemy(37258, 38888, 2.0f, 20, 2);
 		enemysVector.pushBack(enemy5);
 		tag = 1000 + enemysVector.getIndex(enemy5);
 		enemy5->enemyCollider->setTag(tag);
@@ -1134,9 +1134,9 @@ void Egipt::update(float dt)
 		enemy5->enemy2RunningRight->setPosition(enemy5->enemyArt->getPosition().x, enemy5->enemyArt->getPosition().y + 20);
 		enemy5->enemy2RunningLeft->setPosition(enemy5->enemyArt->getPosition().x, enemy5->enemyArt->getPosition().y + 20);
 		enemy5->enemy2IdleRight->setPosition(enemy5->enemyArt->getPosition().x, enemy5->enemyArt->getPosition().y + 20);
-		enemy5->enemy2IdleLeft->setPosition(enemy5->enemyArt->getPosition().x, enemy5->enemyArt->getPosition().y + 20);
+		enemy5->enemy2IdleLeft->setPosition(enemy5->enemyArt->getPosition().x, enemy5->enemyArt->getPosition().y + 20);*/
 
-		enemy6 = new Enemy(34670, 34670, 2.0f, 20, 2);
+		/*enemy6 = new Enemy(34670, 34670, 2.0f, 20, 2);
 		enemysVector.pushBack(enemy6);
 		tag = 1000 + enemysVector.getIndex(enemy6);
 		enemy6->enemyCollider->setTag(tag);
@@ -1182,7 +1182,7 @@ void Egipt::update(float dt)
 		enemy7->enemy2RunningRight->setPosition(enemy7->enemyArt->getPosition().x, enemy7->enemyArt->getPosition().y + 20);
 		enemy7->enemy2RunningLeft->setPosition(enemy7->enemyArt->getPosition().x, enemy7->enemyArt->getPosition().y + 20);
 		enemy7->enemy2IdleRight->setPosition(enemy7->enemyArt->getPosition().x, enemy7->enemyArt->getPosition().y + 20);
-		enemy7->enemy2IdleLeft->setPosition(enemy7->enemyArt->getPosition().x, enemy7->enemyArt->getPosition().y + 20);
+		enemy7->enemy2IdleLeft->setPosition(enemy7->enemyArt->getPosition().x, enemy7->enemyArt->getPosition().y + 20);*/
 
 		/*enemy3 = new Enemy(14381 + 9000, 14381 + 7750, 2.0f, 4, 1);
 		enemysVector.pushBack(enemy3);
